@@ -28,15 +28,15 @@ an environment variable. Kind parameter is then used for separating you'r differ
 When needed to segment your events specify a value for the predefined dimensions (d1, d2 and d3). Which can be used
 to filter, segment your tracked events. 
 
-*Click tracking example*
+**Click tracking example**
 
 `analytics.mydomain.com/?programId=<programId>&k=click&url=https://github.com&s=<hash>&s=da8d9...`
 
-*Lead tracking example*
+**Lead tracking example**
 
 `analytics.mydomain.com/?programId=<programId>&k=click&url=https://yoursite.com&a=1&s=<hash>&s=da8d9...`
 
-*Pixel tracking example* 
+**Pixel tracking example** 
 
 `analytics.mydomain.com/?programId=<programId>&k=impressionk&s=<hash>&s=da8d9...`
 
@@ -44,7 +44,7 @@ to filter, segment your tracked events.
 ## Hash for security 
 
 BA enforces you to sign each url. This prevents anyone to spoof or manipulate your tracking events. 
-By getting the md5 of <secret> + <uri> and add it to the uri with the `s` parameter BA keeps your tracking links secured.
+By getting the md5 of `${secret} + ${uri}` and add it to the uri with the `s` parameter BA keeps your tracking links secured.
 
 ## Installation & run
 
