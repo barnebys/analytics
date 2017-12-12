@@ -1,6 +1,6 @@
 {
   "name": "barnebys-analytics",
-  "version": "0.0.1",
+  "version": "0.0.1-canary.0",
   "description": "Barnebys Analytics",
   "main": "index.js",
   "scripts": {
