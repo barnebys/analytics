@@ -53,9 +53,11 @@ module.exports = async (req, res) => {
         throw err
     }
 
-    session(req, res) // Start session
+    // Start session
+    session(req, res)
 
-    track(req, res) // Run tracker async
+    // Run tracker async
+    track(req, res)
 
     // handle leads from affiliates
     if (a) {
@@ -68,7 +70,6 @@ module.exports = async (req, res) => {
     if (url) {
         // Do redirect
         redirect(res, 302, url)
-        //return { redirect: url }
     } else {
         return emptygif.sendEmptyGif(req, res, {
             'Content-Type' : 'image/gif',

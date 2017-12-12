@@ -1,7 +1,7 @@
 # Barnebys Analytics
 
 A micro tracker for clicks, leads and impressions. 
-Microservice design and built on Micro from Zeit. Google BigQuery
+Microservice design and built on [Micro](https://github.com/zeit/micro) from [Zeit](https://github.com/zeit). [Google BigQuery](https://cloud.google.com/bigquery/)
 is used for storage and currently the only option. Also referred to as BA.
 
 ## Parameters
@@ -56,7 +56,7 @@ Adjust settings if needed for dotenv then run:
 
 ## Deployment with Now
 
-You can deploy to any node compatible machine but for ease and scalabilty we suggest using Now.
+You can deploy to any node compatible machine but for ease and scalabilty we suggest using [Now](https://zeit.co/now).
 
 `now`
 
