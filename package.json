@@ -1,0 +1,30 @@
+{
+  "name": "barnebys-analytics",
+  "version": "0.0.1",
+  "description": "Barnebys Analytics",
+  "main": "index.js",
+  "scripts": {
+    "start": "micro",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/bigquery": "^0.11.1",
+    "dotenv": "^4.0.0",
+    "emptygif": "^0.1.1",
+    "md5": "^2.2.1",
+    "micro": "^9.0.2",
+    "micro-cookie-session": "^2.0.0-beta.1",
+    "micro-redirect": "^1.0.0",
+    "request-ip": "^2.0.2"
+  },
+  "now": {
+    "files": [
+      ".env",
+      "key.json",
+      "index.js",
+      "lib"
+    ]
+  }
+}
