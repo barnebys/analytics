@@ -64,7 +64,7 @@ You can deploy to any node compatible machine but for ease and scalabilty we sug
 
 ## Clients / Libraries
 
-[Barnebys Analytics PHP](https://github.com/barnebys/barnebys-analytics-php)
+[Barnebys Analytics PHP](https://github.com/barnebys/analytics-php)
 
 ## Limitations with Google BigQuery
 
