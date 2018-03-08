@@ -1,54 +1,45 @@
 require('dotenv').config()
 
+const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env
 const { parse } = require('url')
+const { send } = require('micro')
+
+const md5 = require('md5')
 const emptygif = require('emptygif')
 const redirect = require('micro-redirect')
-const md5 = require('md5');
+const session = require('micro-cookie-session')({
+    name: SESSION_NAME,
+    keys: [SECRET],
+    maxAge: SESSION_MAX_AGE * 60 * 1000,
+})
 
 const track = require('./lib/track')
 
-const session = require('micro-cookie-session')({
-    name: process.env.SESSION_NAME,
-    keys: [process.env.SECRET],
-    maxAge: process.env.SESSION_MAX_AGE * 60 * 1000,
-})
+const robots = ['User-agent: *', 'Disallow: /'].join("\n")
 
-/**
- * Barnebys Analytics Tracker
- *
- * Available parameters
- * s, signed
- * p, programId
- * k, kind
- * a, affiliate
- * url, url
- * d1-d3, dimension1-3
- *
- * @param req
- * @param res
- * @returns {Promise<void>}
- */
 module.exports = async (req, res) => {
 
     const { query: { s, p, k, a, url } } = parse(req.url, true)
 
     const signedURL = req.url.slice(0, req.url.lastIndexOf('&s='))
-    const hash = md5(process.env.SECRET + signedURL)
+    const hash = md5(SECRET + signedURL)
+
+    if (req.url === '/robots.txt') {
+        return send(res, 200, robots)
+    } else if (req.url === '/favicon.ico') {
+        return send(res, 204)
+    }
+
+    if (!p || !k) {
+        if (SITE_URL) {
+            return redirect(res, 302, SITE_URL)
+        } else {
+            return send(res, 204)
+        }
+    }
 
     if (hash !== s) {
         const err = new Error('Invalid `signed` value')
-        err.statusCode = 400
-        throw err
-    }
-
-    if (!p) {
-        const err = new Error('Missing `p` parameter with program id')
-        err.statusCode = 400
-        throw err
-    }
-
-    if (!k) {
-        const err = new Error('Missing `k` parameter with kind type')
         err.statusCode = 400
         throw err
     }
@@ -68,8 +59,7 @@ module.exports = async (req, res) => {
     }
 
     if (url) {
-        // Do redirect
-        redirect(res, 302, url)
+        return redirect(res, 302, url)
     } else {
         return emptygif.sendEmptyGif(req, res, {
             'Content-Type' : 'image/gif',

@@ -64,6 +64,13 @@ now
 now alias ${deploymentUrl} ${productionFQDN}
 ```
 
+## Environment Settings
+
+`SECRET` your secret key for creating hashes
+`SESSION_NAME` your cookie name for sessions
+`SESSION_MAX_AGE` max age for your sessions
+`SITE_URL` optional, used for redirecting invalid requests to your dashboard or site
+
 ## Clients / Libraries
 
 [Barnebys Analytics PHP](https://github.com/barnebys/analytics-php)
