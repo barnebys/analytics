@@ -6,6 +6,7 @@ const { send } = require('micro')
 
 const md5 = require('md5')
 const emptygif = require('emptygif')
+const encodeUrl = require('encodeurl')
 const redirect = require('micro-redirect')
 const session = require('micro-cookie-session')({
     name: SESSION_NAME,
@@ -59,7 +60,7 @@ module.exports = async (req, res) => {
     }
 
     if (url) {
-        return redirect(res, 302, url)
+        redirect(res, 302, encodeUrl(url))
     } else {
         return emptygif.sendEmptyGif(req, res, {
             'Content-Type' : 'image/gif',
