@@ -55,8 +55,6 @@ module.exports = async (req, res) => {
     if (a) {
         req.session.kind = k
         req.session.programId = p
-    } else {
-        req.session = null
     }
 
     if (url) {
