@@ -1,26 +1,14 @@
-const BigQuery = require('@google-cloud/bigquery');
 const { parse } = require('url')
 const requestIp = require('request-ip')
 const anonymize = require('ip-anonymize')
-
-const key = require('../key.json')
-
-const { project_id } = key
-const datasetId = 'tracking'
-const schema = "programId:string, lead:boolean, url:string, clientIP:string, userAgent:string, dimension1:string, dimension2:string, dimension3:string, dimension4:string, dimension5:string, timestamp:datetime"
-
-const bigquery = BigQuery({
-    projectId: project_id,
-    keyFilename: 'key.json'
-});
+const datastore = require('./datastore')
 
 module.exports = async (req, res) => {
+    const now = new Date(Date.now()).toISOString();
+
     const { query: { p, k, url, d1, d2, d3, d4, d5, a } } = parse(req.url, true)
 
-    const datetime = BigQuery.datetime(new Date(Date.now()).toISOString());
-
     let clientIp = requestIp.getClientIp(req)
-
     try {
         clientIp = anonymize(clientIp)
     } catch (err) {
@@ -40,7 +28,6 @@ module.exports = async (req, res) => {
             dimension3: d3 || '',
             dimension4: d4 || '',
             dimension5: d5 || '',
-            timestamp: datetime
         }
     ]
 
@@ -57,19 +44,13 @@ module.exports = async (req, res) => {
             dimension3: d3 || '',
             dimension4: d4 || '',
             dimension5: d5 || '',
-            timestamp: datetime
         })
 
         req.session = null
     }
 
-    return bigquery
-        .dataset(datasetId)
-        .table(k)
-        .insert(rows, {
-            autoCreate: true,
-            schema: schema
-        })
+    return datastore
+        .insert(rows, now)
         .then((data) => {
             // const apiResponse = data[0];
         })
@@ -82,6 +63,5 @@ module.exports = async (req, res) => {
                 insertErrors.forEach((err) => console.error(err));
             }
         });
-
 }
 
