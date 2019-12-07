@@ -1,6 +1,6 @@
 require('dotenv').config()
-
 const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env
+
 const { parse } = require('url')
 const { send } = require('micro')
 
@@ -16,22 +16,27 @@ const session = require('micro-cookie-session')({
 
 const track = require('./lib/track')
 
-const robots = ['User-agent: *', 'Disallow: /'].join("\n")
-
 module.exports = async (req, res) => {
-
-    const { query: { s, p, k, a, url } } = parse(req.url, true)
-
-    const signedURL = req.url.slice(0, req.url.lastIndexOf('&s='))
-    const hash = md5(SECRET + signedURL)
-
     if (req.url === '/robots.txt') {
-        return send(res, 200, robots)
-    } else if (req.url === '/favicon.ico') {
+        console.log('Sending robots response')
+        return send(res, 200, ['User-agent: *', 'Disallow: /'].join("\n"))
+    }
+    if (req.url === '/favicon.ico') {
+        console.log('Sending favicon response')
         return send(res, 204)
     }
 
-    if (!p || !k) {
+    const { query } = parse(req.url, true)
+    const {
+        s: signature,
+        p: programId,
+        k: kind,
+        a: affiliate,
+        url,
+    } = query
+
+    if (!programId || !kind) {
+        console.log('Missing required `programId` and/or `kind` values')
         if (SITE_URL) {
             return redirect(res, 302, SITE_URL)
         } else {
@@ -39,8 +44,10 @@ module.exports = async (req, res) => {
         }
     }
 
-    if (hash !== s) {
-        const err = new Error('Invalid `signed` value')
+    const unsignedQuery = req.url.slice(0, req.url.lastIndexOf('&s='))
+    const hash = md5(SECRET + unsignedQuery)
+    if (hash !== signature) {
+        const err = new Error('Invalid signature')
         err.statusCode = 400
         throw err
     }
@@ -51,10 +58,10 @@ module.exports = async (req, res) => {
     // Run tracker async
     track(req, res)
 
-    // handle leads from affiliates
-    if (a) {
-        req.session.kind = k
-        req.session.programId = p
+    // Handle leads from affiliates
+    if (affiliate) {
+        req.session.kind = kind
+        req.session.programId = programId
     }
 
     if (url) {

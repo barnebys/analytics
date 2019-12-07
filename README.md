@@ -6,7 +6,7 @@ is used for storage and currently the only option. Barnebys Analytics is also re
 
 ## Parameters
   
-    s = signed *
+    s = signature *
     p = programId *
     k = kind *
     a = affiliate
