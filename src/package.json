@@ -4,8 +4,7 @@
   "description": "Barnebys Analytics",
   "main": "index.js",
   "scripts": {
-    "start": "micro",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "micro"
   },
   "author": "",
   "license": "MIT",
