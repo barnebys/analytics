@@ -3,10 +3,7 @@ const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env
 
 const { parse } = require('url')
 const { send } = require('micro')
-
-const md5 = require('md5')
-const emptygif = require('emptygif')
-const encodeUrl = require('encodeurl')
+const morgan = require('micro-morgan')
 const redirect = require('micro-redirect')
 const session = require('micro-cookie-session')({
     name: SESSION_NAME,
@@ -14,9 +11,13 @@ const session = require('micro-cookie-session')({
     maxAge: SESSION_MAX_AGE * 60 * 1000,
 })
 
+const md5 = require('md5')
+const emptygif = require('emptygif')
+const encodeUrl = require('encodeurl')
+
 const track = require('./lib/track')
 
-module.exports = async (req, res) => {
+module.exports = morgan('tiny')(async (req, res) => {
     if (req.url === '/robots.txt') {
         console.log('Sending robots response')
         return send(res, 200, ['User-agent: *', 'Disallow: /'].join("\n"))
@@ -73,5 +74,4 @@ module.exports = async (req, res) => {
             'Cache-Control' : 'public, max-age=0' // or specify expiry to make sure it will call everytime
         });
     }
-
-}
+})
