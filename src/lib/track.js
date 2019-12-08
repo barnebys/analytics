@@ -11,9 +11,9 @@ module.exports = async (req, res) => {
 
     const now = new Date(Date.now()).toISOString();
 
-    let clientIp = requestIp.getClientIp(req)
+    let clientIP = requestIp.getClientIp(req)
     try {
-        clientIp = anonymize(clientIp)
+        clientIP = anonymize(clientIP)
     } catch (err) {
 
     }
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
         programId,
         url,
         lead: false,
-        clientIP: clientIp,
+        clientIP,
         userAgent: req.headers && req.headers['user-agent'],
         dimension1: d1 || '',
         dimension2: d2 || '',
@@ -33,12 +33,12 @@ module.exports = async (req, res) => {
     }]
 
     // Handle leads
-    if (!affiliate && req.session.kind && req.session.programId && kind === req.session.kind) {
+    if (!affiliate && req.session.programId && req.session.kind && req.session.kind === kind) {
         rows.push({
             programId: req.session.programId,
             url,
             lead: true,
-            clientIP: clientIp,
+            clientIP,
             userAgent: req.headers && req.headers['user-agent'],
             dimension1: d1 || '',
             dimension2: d2 || '',
@@ -52,9 +52,6 @@ module.exports = async (req, res) => {
 
     return datastore
         .insert(rows, now)
-        .then((data) => {
-            // const apiResponse = data[0];
-        })
         .catch((err) => {
             console.error('ERROR:', err);
             const {insertErrors} = err.response
