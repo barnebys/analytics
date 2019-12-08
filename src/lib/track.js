@@ -1,12 +1,15 @@
-const { parse } = require('url')
 const requestIp = require('request-ip')
 const anonymize = require('ip-anonymize')
 const datastore = require('./datastore')
+const queryParser = require('./queryParser')
 
 module.exports = async (req, res) => {
-    const now = new Date(Date.now()).toISOString();
+    const { 
+	programId, kind, affiliate, url,
+	d1, d2, d3, d4, d5,
+    } = queryParser(req.url)
 
-    const { query: { p, k, url, d1, d2, d3, d4, d5, a } } = parse(req.url, true)
+    const now = new Date(Date.now()).toISOString();
 
     let clientIp = requestIp.getClientIp(req)
     try {
@@ -16,26 +19,24 @@ module.exports = async (req, res) => {
     }
 
     // Default event click/impression
-    let rows = [
-        {
-            programId: p,
-            url: url,
-            lead: false,
-            clientIP: clientIp,
-            userAgent: req.headers && req.headers['user-agent'],
-            dimension1: d1 || '',
-            dimension2: d2 || '',
-            dimension3: d3 || '',
-            dimension4: d4 || '',
-            dimension5: d5 || '',
-        }
-    ]
+    let rows = [{
+        programId,
+        url,
+        lead: false,
+        clientIP: clientIp,
+        userAgent: req.headers && req.headers['user-agent'],
+        dimension1: d1 || '',
+        dimension2: d2 || '',
+        dimension3: d3 || '',
+        dimension4: d4 || '',
+        dimension5: d5 || '',
+    }]
 
     // Handle leads
-    if (!a && req.session.kind && req.session.programId && k === req.session.kind) {
+    if (!affiliate && req.session.kind && req.session.programId && kind === req.session.kind) {
         rows.push({
             programId: req.session.programId,
-            url: url,
+            url,
             lead: true,
             clientIP: clientIp,
             userAgent: req.headers && req.headers['user-agent'],
@@ -64,4 +65,3 @@ module.exports = async (req, res) => {
             }
         });
 }
-

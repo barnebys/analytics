@@ -1,7 +1,6 @@
 require('dotenv').config()
 const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env
 
-const { parse } = require('url')
 const { send } = require('micro')
 const morgan = require('micro-morgan')
 const redirect = require('micro-redirect')
@@ -16,6 +15,7 @@ const emptygif = require('emptygif')
 const encodeUrl = require('encodeurl')
 
 const track = require('./lib/track')
+const queryParser = require('./lib/queryParser')
 
 module.exports = morgan('tiny')(async (req, res) => {
     if (req.url === '/robots.txt') {
@@ -27,14 +27,7 @@ module.exports = morgan('tiny')(async (req, res) => {
         return send(res, 204)
     }
 
-    const { query } = parse(req.url, true)
-    const {
-        s: signature,
-        p: programId,
-        k: kind,
-        a: affiliate,
-        url,
-    } = query
+    const { signature, programId, kind, affiliate, url } = queryParser(req.url)
 
     if (!programId || !kind) {
         console.log('Missing required `programId` and/or `kind` values')
