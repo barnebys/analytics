@@ -14,6 +14,11 @@ const bigquery = BigQuery({
     keyFilename: 'key.json'
 });
 
+const options = {
+    autoCreate: true,
+    schema: schema
+}
+
 module.exports = async (req, res) => {
     const { query: { p, k, url, d1, d2, d3, d4, d5, a } } = parse(req.url, true)
 
@@ -66,10 +71,7 @@ module.exports = async (req, res) => {
     return bigquery
         .dataset(datasetId)
         .table(k)
-        .insert(rows, {
-            autoCreate: true,
-            schema: schema
-        })
+        .insert(rows, options)
         .then((data) => {
             // const apiResponse = data[0];
         })
