@@ -1,49 +1,50 @@
-const { parse } = require('url')
 const requestIp = require('request-ip')
 const anonymize = require('ip-anonymize')
 const datastore = require('./datastore')
+const queryParser = require('./queryParser')
 
 module.exports = async (req, res) => {
+    const { 
+	programId, kind, affiliate, url,
+	dimension1, dimension2, dimension3, dimension4, dimension5,
+    } = queryParser(req.url)
+
     const now = new Date(Date.now()).toISOString();
 
-    const { query: { p, k, url, d1, d2, d3, d4, d5, a } } = parse(req.url, true)
-
-    let clientIp = requestIp.getClientIp(req)
+    let clientIP = requestIp.getClientIp(req)
     try {
-        clientIp = anonymize(clientIp)
+        clientIP = anonymize(clientIP)
     } catch (err) {
 
     }
 
     // Default event click/impression
-    let rows = [
-        {
-            programId: p,
-            url: url,
-            lead: false,
-            clientIP: clientIp,
-            userAgent: req.headers && req.headers['user-agent'],
-            dimension1: d1 || '',
-            dimension2: d2 || '',
-            dimension3: d3 || '',
-            dimension4: d4 || '',
-            dimension5: d5 || '',
-        }
-    ]
+    let rows = [{
+        programId,
+        url,
+        lead: false,
+        clientIP,
+        userAgent: req.headers && req.headers['user-agent'],
+        dimension1: dimension1 || '',
+        dimension2: dimension2 || '',
+        dimension3: dimension3 || '',
+        dimension4: dimension4 || '',
+        dimension5: dimension5 || '',
+    }]
 
     // Handle leads
-    if (!a && req.session.kind && req.session.programId && k === req.session.kind) {
+    if (!affiliate && req.session.programId && req.session.kind && req.session.kind === kind) {
         rows.push({
             programId: req.session.programId,
-            url: url,
+            url,
             lead: true,
-            clientIP: clientIp,
+            clientIP,
             userAgent: req.headers && req.headers['user-agent'],
-            dimension1: d1 || '',
-            dimension2: d2 || '',
-            dimension3: d3 || '',
-            dimension4: d4 || '',
-            dimension5: d5 || '',
+            dimension1: dimension1 || '',
+            dimension2: dimension2 || '',
+            dimension3: dimension3 || '',
+            dimension4: dimension4 || '',
+            dimension5: dimension5 || '',
         })
 
         req.session = null
@@ -51,9 +52,6 @@ module.exports = async (req, res) => {
 
     return datastore
         .insert(rows, now)
-        .then((data) => {
-            // const apiResponse = data[0];
-        })
         .catch((err) => {
             console.error('ERROR:', err);
             const {insertErrors} = err.response
@@ -64,4 +62,3 @@ module.exports = async (req, res) => {
             }
         });
 }
-
