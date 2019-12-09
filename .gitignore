@@ -1,4 +1,4 @@
 node_modules
 .idea
 .env
-key.json
+src/key.json
