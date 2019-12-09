@@ -9,10 +9,10 @@ module.exports = url => {
         kind: query.k,
         affiliate: query.a,
         url: query.url,
-        d1: query.d1,
-        d2: query.d2,
-        d3: query.d3,
-        d4: query.d4,
-        d5: query.d5,
+        dimension1: query.d1,
+        dimension2: query.d2,
+        dimension3: query.d3,
+        dimension4: query.d4,
+        dimension5: query.d5,
     }
 }

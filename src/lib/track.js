@@ -6,7 +6,7 @@ const queryParser = require('./queryParser')
 module.exports = async (req, res) => {
     const { 
 	programId, kind, affiliate, url,
-	d1, d2, d3, d4, d5,
+	dimension1, dimension2, dimension3, dimension4, dimension5,
     } = queryParser(req.url)
 
     const now = new Date(Date.now()).toISOString();
@@ -25,11 +25,11 @@ module.exports = async (req, res) => {
         lead: false,
         clientIP,
         userAgent: req.headers && req.headers['user-agent'],
-        dimension1: d1 || '',
-        dimension2: d2 || '',
-        dimension3: d3 || '',
-        dimension4: d4 || '',
-        dimension5: d5 || '',
+        dimension1: dimension1 || '',
+        dimension2: dimension2 || '',
+        dimension3: dimension3 || '',
+        dimension4: dimension4 || '',
+        dimension5: dimension5 || '',
     }]
 
     // Handle leads
@@ -40,11 +40,11 @@ module.exports = async (req, res) => {
             lead: true,
             clientIP,
             userAgent: req.headers && req.headers['user-agent'],
-            dimension1: d1 || '',
-            dimension2: d2 || '',
-            dimension3: d3 || '',
-            dimension4: d4 || '',
-            dimension5: d5 || '',
+            dimension1: dimension1 || '',
+            dimension2: dimension2 || '',
+            dimension3: dimension3 || '',
+            dimension4: dimension4 || '',
+            dimension5: dimension5 || '',
         })
 
         req.session = null
