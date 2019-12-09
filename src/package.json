@@ -29,6 +29,7 @@
       "key.json",
       "index.js",
       "lib"
-    ]
+    ],
+    "version": 1
   }
 }
