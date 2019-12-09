@@ -24,6 +24,8 @@
   "now": {
     "files": [
       ".env",
+      "package.json",
+      "package-lock.json",
       "key.json",
       "index.js",
       "lib"
