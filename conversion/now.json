@@ -1,25 +1,9 @@
 {
   "version": 2,
-  "regions": [
-    "bru1"
-  ],
-  "builds": [
+  "rewrites": [
     {
-      "src": "public/*",
-      "use": "@now/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/v1/bite.js",
-      "dest": "/public/bite.v1.js",
-      "headers": {
-        "cache-control": "max-age=31536000,immutable"
-      }
-    },
-    {
-      "src": "/.*",
-      "status": 404
+      "source": "/v1/bite.js",
+      "destination": "bite.v1.js"
     }
   ]
 }
