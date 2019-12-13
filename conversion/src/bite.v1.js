@@ -20,7 +20,7 @@
                 '&d4=' + eventValue
 
             const request = new XMLHttpRequest()
-            request.open('GET', 'http://localhost:3000' + query)
+            request.open('GET', process.env.BA_HOST + query)
             request.send()
         }
     }

@@ -1,5 +1,6 @@
 {
   "babel": {
+    "plugins": ["transform-inline-environment-variables"],
     "presets": [
       [
         "@babel/preset-env",
@@ -12,7 +13,8 @@
   "devDependencies": {
     "@babel/cli": "^7.7.5",
     "@babel/core": "^7.7.5",
-    "@babel/preset-env": "^7.7.6"
+    "@babel/preset-env": "^7.7.6",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3"
   },
   "scripts": {
     "build": "babel src/ -d public/"
