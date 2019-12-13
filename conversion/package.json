@@ -1,0 +1,20 @@
+{
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": "cover 99.5%"
+        }
+      ]
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.5",
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.6"
+  },
+  "scripts": {
+    "build": "babel src/ -d public/"
+  }
+}
