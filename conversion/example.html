@@ -9,5 +9,10 @@
   })(window,document,'script','./public/bite.v1.js','ba');
 
   window.ba('init', 'test')
-  window.ba('send', 'click', 'thing')
+  window.ba('send', 'event', 'click', 'thing')
+  window.ba('send', {
+      hitType: 'event',
+      eventCategory: 'click',
+      eventAction: 'thing',
+  })
 </script>
