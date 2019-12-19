@@ -1,6 +1,8 @@
 {
   "babel": {
-    "plugins": ["transform-inline-environment-variables"],
+    "plugins": [
+      "transform-inline-environment-variables"
+    ],
     "presets": [
       [
         "@babel/preset-env",
@@ -18,5 +20,13 @@
   },
   "scripts": {
     "build": "babel src/ -d public/"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "^0.11.1",
+    "emptygif": "^0.1.2",
+    "encodeurl": "^1.0.2",
+    "ip-anonymize": "^0.1.0",
+    "micro-cookie-session": "^2.0.0-beta.1",
+    "request-ip": "^2.1.3"
   }
 }

@@ -1,5 +1,5 @@
 node_modules
 .idea
-.env
-src/key.json
-conversion/public/
+conversion/.env
+conversion/api/key.json
+conversion/public/*.js
