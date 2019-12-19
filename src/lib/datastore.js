@@ -1,3 +1,4 @@
+const path = require('path')
 const BigQuery = require('@google-cloud/bigquery');
 const key = require('../key.json')
 
@@ -5,7 +6,7 @@ const { project_id } = key
 
 const bigquery = BigQuery({
     projectId: project_id,
-    keyFilename: 'key.json'
+    keyFilename: path.resolve(__dirname, '../key.json'),
 });
 
 const datasetId = 'tracking'
