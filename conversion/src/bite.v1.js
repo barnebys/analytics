@@ -9,11 +9,12 @@
         }
 
         const query = '/?p=' + state.programId +
-            '&k='  + hitType +
-            '&d1=' + eventCategory +
-            '&d2=' + eventAction +
-            '&d3=' + eventLabel +
-            '&d4=' + eventValue
+            '&k=conversion' +
+            '&d1=' + hitType +
+            '&d2=' + eventCategory +
+            '&d3=' + eventAction +
+            '&d4=' + eventLabel +
+            '&d5=' + eventValue
 
         const request = new XMLHttpRequest()
         request.open('GET', process.env.BA_HOST + query)
