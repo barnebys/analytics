@@ -17,7 +17,7 @@
             '&d5=' + eventValue
 
         const request = new XMLHttpRequest()
-        request.open('GET', process.env.BA_HOST + query)
+        request.open('GET', process.env.BA_HOST + '/api' + query)
         request.send()
     }
 

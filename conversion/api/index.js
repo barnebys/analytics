@@ -1,49 +1,34 @@
-require('dotenv').config()
 const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env
 
-const { send } = require('micro')
-const morgan = require('micro-morgan')
-const redirect = require('micro-redirect')
 const session = require('micro-cookie-session')({
     name: SESSION_NAME,
     keys: [SECRET],
     maxAge: SESSION_MAX_AGE * 60 * 1000,
 })
 
-const md5 = require('md5')
 const emptygif = require('emptygif')
 const encodeUrl = require('encodeurl')
 
 const track = require('./lib/track')
 const queryParser = require('./lib/queryParser')
 
-module.exports = morgan('tiny')(async (req, res) => {
-    if (req.url === '/robots.txt') {
-        console.log('Sending robots response')
-        return send(res, 200, ['User-agent: *', 'Disallow: /'].join("\n"))
-    }
-    if (req.url === '/favicon.ico') {
-        console.log('Sending favicon response')
-        return send(res, 204)
-    }
+const redirect = (response, statusCode, redirectTarget) => {
+    response.writeHead(statusCode, {
+	Location: redirectTarget
+    })
+    return response.end()
+}
 
-    const { signature, programId, kind, affiliate, url } = queryParser(req.url)
+module.exports = async (req, res) => {
+    const { programId, kind, affiliate, url } = queryParser(req.url)
 
     if (!programId || !kind) {
         console.log('Missing required `programId` and/or `kind` values')
         if (SITE_URL) {
             return redirect(res, 302, SITE_URL)
-        } else {
-            return send(res, 204)
         }
-    }
 
-    const unsignedQuery = req.url.slice(0, req.url.lastIndexOf('&s='))
-    const hash = md5(SECRET + unsignedQuery)
-    if (hash !== signature) {
-        const err = new Error('Invalid signature')
-        err.statusCode = 400
-        throw err
+	return res.status(204).end()
     }
 
     // Start session
@@ -67,4 +52,4 @@ module.exports = morgan('tiny')(async (req, res) => {
             'Cache-Control' : 'public, max-age=0' // or specify expiry to make sure it will call everytime
         });
     }
-})
+}

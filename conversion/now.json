@@ -5,6 +5,12 @@
       "BA_HOST": "@ba-host"
     }
   },
+  "env": {
+    "SESSION_NAME": "@session-name",
+    "SESSION_MAX_AGE": "@session-max-age",
+    "SECRET": "@secret",
+    "SITE_URL": "@site-url"
+  },
   "headers": [
     {
       "source": "/v1/bite.js",
@@ -20,6 +26,10 @@
     {
       "source": "/v1/bite.js",
       "destination": "bite.v1.js"
+    },
+    {
+      "source": "/api/robots.txt",
+      "destination": "robots.txt"
     }
   ]
 }
