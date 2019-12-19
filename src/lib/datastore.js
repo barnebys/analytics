@@ -34,7 +34,7 @@ const schemaString = Object
 
 
 module.exports = {
-    insert: (rows, timestamp) => {
+    insert: (tableName, rows, timestamp) => {
         const rowsWithTimestamp = rows.map(row => ({
             ...row,
             timestamp: BigQuery.datetime(timestamp),
@@ -42,7 +42,7 @@ module.exports = {
 
         return bigquery
             .dataset(datasetId)
-            .table(k)
+            .table(tableName)
             .insert(rowsWithTimestamp, {
                 autoCreate: true,
                 schema: schemaString,

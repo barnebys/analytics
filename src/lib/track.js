@@ -50,8 +50,10 @@ module.exports = async (req, res) => {
         req.session = null
     }
 
+    const tableName = kind
+
     return datastore
-        .insert(rows, now)
+        .insert(tableName, rows, now)
         .catch((err) => {
             console.error('ERROR:', err);
             const {insertErrors} = err.response
