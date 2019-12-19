@@ -5,6 +5,17 @@
       "BA_HOST": "@ba-host"
     }
   },
+  "headers": [
+    {
+      "source": "/v1/bite.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/v1/bite.js",
