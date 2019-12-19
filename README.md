@@ -51,7 +51,7 @@ By getting the md5 of `${secret} + ${uri}` and appending that hash to the uri wi
 1. Create a Google Big Query project on Google Cloud
 2. Create a dataset named `tracking` in Google Big Query
 3. Create a service account with admin permissions and fetch the json configuration
-4. Drop the json configuration as key.json in the `src/` folder
+4. Drop the json configuration as key.json in the `api/` directory
 5. Adjust settings for dotenv if needed
 6. Install dependencies and run start   `npm install` `npm run start`
 
