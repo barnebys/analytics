@@ -13,13 +13,14 @@
     ]
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.5",
-    "@babel/core": "^7.7.5",
+    "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.6",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3"
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
+    "babelify": "^10.0.0",
+    "browserify": "^16.5.0"
   },
   "scripts": {
-    "build": "babel src/ -d public/"
+    "build": "browserify -t babelify src/*.js --outfile public/*.js"
   },
   "dependencies": {
     "@google-cloud/bigquery": "^0.11.1",
