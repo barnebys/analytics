@@ -1,6 +1,7 @@
 (function () {
     const state = {
-        programId: null
+        programId: null,
+        sessionId: null,
     }
 
     function sendEvent({ hitType, eventCategory, eventAction, eventLabel, eventValue }) {
@@ -21,9 +22,41 @@
         request.send()
     }
 
+    function determineSession() {
+        const cookies = document.cookie
+            .split('; ')
+            .map(cookie => cookie.split('='))
+            .reduce((mapping, [key, value]) => ({
+                ...mapping,
+                [key]: value,
+            }), {})
+
+        if (cookies['barnebys_session']) {
+            return cookies['barnebys_session']
+        }
+
+        const currentLocation = new URL(window.location)
+        const searchParams = new URLSearchParams(currentLocation.search)
+        const params = Array.from(searchParams.entries())
+        const btmTags = params
+            .filter(([key]) => key.startsWith('btm_'))
+            .reduce((mapping, [key, value]) => ({
+                ...mapping,
+                [key.replace('btm_', '')]: value,
+            }), {})
+
+        if (btmTags['session_id']) {
+            document.cookie = `barnebys_session=${btmTags['session_id']}`
+            return btmTags['session_id']
+        }
+
+        return null
+    }
+
     const actions = {
         'init': (programId) => {
             state.programId = programId
+            state.sessionId = determineSession()
         },
         'send': (hitType, eventCategory, eventAction, eventLabel, eventValue) => {
             if (typeof hitType === 'object') {
