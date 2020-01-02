@@ -26,6 +26,19 @@
         request.send()
     }
 
+    function extractBTMParameters() {
+        const currentLocation = new URL(window.location)
+        const searchParams = new URLSearchParams(currentLocation.search)
+        const params = Array.from(searchParams.entries())
+
+        return params
+            .filter(([key]) => key.startsWith('btm_'))
+            .reduce((mapping, [key, value]) => ({
+                ...mapping,
+                [key.replace('btm_', '')]: value,
+            }), {})
+    }
+
     function determineSession() {
         const cookies = document.cookie
             .split('; ')
@@ -39,15 +52,7 @@
             return cookies['barnebys_session']
         }
 
-        const currentLocation = new URL(window.location)
-        const searchParams = new URLSearchParams(currentLocation.search)
-        const params = Array.from(searchParams.entries())
-        const btmTags = params
-            .filter(([key]) => key.startsWith('btm_'))
-            .reduce((mapping, [key, value]) => ({
-                ...mapping,
-                [key.replace('btm_', '')]: value,
-            }), {})
+        const btmTags = extractBTMParameters()
 
         if (btmTags['session_id']) {
             document.cookie = `barnebys_session=${btmTags['session_id']}`
