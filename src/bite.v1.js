@@ -2,6 +2,7 @@
     const state = {
         programId: null,
         sessionId: null,
+        locale: null,
     }
 
     function sendEvent({ hitType, eventCategory, eventAction, eventLabel, eventValue }) {
@@ -19,6 +20,10 @@
 
         if (state.sessionId) {
             query += '&sid=' + state.sessionId
+        }
+
+        if (state.locale) {
+            query += '&locale=' + state.locale
         }
 
         const request = new XMLHttpRequest()
@@ -39,7 +44,7 @@
             }), {})
     }
 
-    function determineSession() {
+    function determineSession(btmTags) {
         const cookies = document.cookie
             .split('; ')
             .map(cookie => cookie.split('='))
@@ -52,8 +57,6 @@
             return cookies['barnebys_session']
         }
 
-        const btmTags = extractBTMParameters()
-
         if (btmTags['session_id']) {
             document.cookie = `barnebys_session=${btmTags['session_id']}`
             return btmTags['session_id']
@@ -65,7 +68,11 @@
     const actions = {
         'init': (programId) => {
             state.programId = programId
-            state.sessionId = determineSession()
+
+            const btmTags = extractBTMParameters()
+
+            state.sessionId = determineSession(btmTags)
+            state.locale = btmTags['locale']
         },
         'send': (hitType, eventCategory, eventAction, eventLabel, eventValue) => {
             if (typeof hitType === 'object') {
