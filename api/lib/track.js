@@ -5,7 +5,7 @@ const queryParser = require('./queryParser')
 
 module.exports = async (req, res) => {
     const { 
-        programId, sessionId, kind, affiliate, url,
+        programId, sessionId, locale, kind, affiliate, url,
         dimension1, dimension2, dimension3, dimension4, dimension5,
     } = queryParser(req.url)
 
@@ -22,6 +22,7 @@ module.exports = async (req, res) => {
     let rows = [{
         programId,
         sessionId: sessionId || '',
+        locale: locale || '',
         url,
         lead: false,
         clientIP,

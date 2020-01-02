@@ -6,6 +6,7 @@ module.exports = url => {
     return {
         programId: query.p,
         sessionId: query.sid,
+        locale: query.locale,
         kind: query.k,
         affiliate: query.a,
         url: query.url,

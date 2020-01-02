@@ -23,6 +23,7 @@ const schema = {
     dimension5: 'string',
     timestamp: 'datetime',
     sessionId: 'string',
+    locale: 'string',
 }
 const schemaString = Object
     .entries(schema)
