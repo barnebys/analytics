@@ -22,6 +22,7 @@ const schema = {
     dimension4: 'string',
     dimension5: 'string',
     timestamp: 'datetime',
+    sessionId: 'string',
 }
 const schemaString = Object
     .entries(schema)

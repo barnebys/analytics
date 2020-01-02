@@ -9,13 +9,17 @@
             throw new Error('BarnebysAnalytics is not initialized correctly')
         }
 
-        const query = '/?p=' + state.programId +
+        let query = '/?p=' + state.programId +
             '&k=conversion' +
             '&d1=' + hitType +
             '&d2=' + eventCategory +
             '&d3=' + eventAction +
             '&d4=' + eventLabel +
             '&d5=' + eventValue
+
+        if (state.sessionId) {
+            query += '&sid=' + state.sessionId
+        }
 
         const request = new XMLHttpRequest()
         request.open('GET', process.env.BA_HOST + '/api' + query)

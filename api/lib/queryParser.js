@@ -4,8 +4,8 @@ module.exports = url => {
     const { query } = parse(url, true)
 
     return {
-        signature: query.s,
         programId: query.p,
+        sessionId: query.sid,
         kind: query.k,
         affiliate: query.a,
         url: query.url,
