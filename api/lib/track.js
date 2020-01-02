@@ -5,8 +5,8 @@ const queryParser = require('./queryParser')
 
 module.exports = async (req, res) => {
     const { 
-	programId, kind, affiliate, url,
-	dimension1, dimension2, dimension3, dimension4, dimension5,
+        programId, sessionId, kind, affiliate, url,
+        dimension1, dimension2, dimension3, dimension4, dimension5,
     } = queryParser(req.url)
 
     const now = new Date(Date.now()).toISOString();
@@ -21,6 +21,7 @@ module.exports = async (req, res) => {
     // Default event click/impression
     let rows = [{
         programId,
+        sessionId: sessionId || '',
         url,
         lead: false,
         clientIP,
