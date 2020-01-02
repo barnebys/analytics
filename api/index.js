@@ -14,7 +14,7 @@ const queryParser = require('./lib/queryParser')
 
 const redirect = (response, statusCode, redirectTarget) => {
     response.writeHead(statusCode, {
-	Location: redirectTarget
+	    Location: redirectTarget
     })
     return response.end()
 }
