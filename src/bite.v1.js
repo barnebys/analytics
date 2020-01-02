@@ -32,16 +32,20 @@
     }
 
     function extractBTMParameters() {
-        const currentLocation = new URL(window.location)
-        const searchParams = new URLSearchParams(currentLocation.search)
-        const params = Array.from(searchParams.entries())
+        function getParameterByName(name) {
+            const url = window.location.href
+            const cleanName = name.replace(/[\[\]]/g, '\\$&')
+            const regex = new RegExp('[?&]' + cleanName + '(=([^&#]*)|&|#|$)')
+            const results = regex.exec(url)
+            if (!results) return null
+            if (!results[2]) return ''
+            return decodeURIComponent(results[2].replace(/\+/g, ' '))
+        }
 
-        return params
-            .filter(([key]) => key.startsWith('btm_'))
-            .reduce((mapping, [key, value]) => ({
-                ...mapping,
-                [key.replace('btm_', '')]: value,
-            }), {})
+        return {
+            'session_id': getParameterByName('btm_session_id'),
+            'locale': getParameterByName('btm_locale'),
+        }
     }
 
     function determineSession(btmTags) {
