@@ -62,7 +62,13 @@
         }
 
         if (btmTags['session_id']) {
-            document.cookie = `barnebys_session=${btmTags['session_id']}`
+            const now = Math.round((new Date()).getTime() / 1000)
+            const ttl = parseInt(process.env.BTM_SESSION_TTL, 10)
+            const expiresAt = (new Date((now + ttl) * 1000))
+                .toGMTString()
+
+            document.cookie = `barnebys_session=${btmTags['session_id']};` +
+                `expires=${expiresAt}`
             return btmTags['session_id']
         }
 
