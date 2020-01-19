@@ -25,12 +25,16 @@
   ],
   "rewrites": [
     {
-      "source": "/v1/bite.js",
-      "destination": "bite.v1.js"
+      "source": "/r/event",
+      "destination": "api/event"
     },
     {
-      "source": "/api/robots.txt",
-      "destination": "robots.txt"
+      "source": "/r/track",
+      "destination": "api/track"
+    },
+    {
+      "source": "/v1/bite.js",
+      "destination": "bite.v1.js"
     },
     {
       "source": "/(.*)",
