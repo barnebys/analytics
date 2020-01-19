@@ -9,8 +9,8 @@ const session = require('micro-cookie-session')({
 const emptygif = require('emptygif')
 const encodeUrl = require('encodeurl')
 
-const track = require('./lib/track')
-const queryParser = require('./lib/queryParser')
+const {collectTrack} = require('../../lib/collect')
+const {queryParserTrack} = require('../../lib/queryParser')
 
 const redirect = (response, statusCode, redirectTarget) => {
     response.writeHead(statusCode, {
@@ -20,7 +20,7 @@ const redirect = (response, statusCode, redirectTarget) => {
 }
 
 module.exports = async (req, res) => {
-    const { programId, kind, affiliate, url } = queryParser(req.url)
+    const { programId, kind, affiliate, url } = queryParserTrack(req.url)
 
     if (!programId || !kind) {
         console.log('Missing required `programId` and/or `kind` values')
@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
     session(req, res)
 
     // Run tracker async
-    track(req, res)
+    await collectTrack(req, res)
 
     // Handle leads from affiliates
     if (affiliate) {

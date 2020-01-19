@@ -5,18 +5,18 @@
         locale: null,
     }
 
-    function sendEvent({ hitType, eventCategory, eventAction, eventLabel, eventValue }) {
+    function sendEvent({ hitType, eventCategory, eventAction, eventLabel, eventValue, eventCurrency }) {
         if (!state.programId) {
             throw new Error('BarnebysAnalytics is not initialized correctly')
         }
 
-        let query = '/?p=' + state.programId +
-            '&k=conversion' +
-            '&d1=' + hitType +
-            '&d2=' + eventCategory +
-            '&d3=' + eventAction +
-            '&d4=' + eventLabel +
-            '&d5=' + eventValue
+        let query = '/r/event?p=' + state.programId +
+            '&_h=' + hitType +
+            '&c=' + eventCategory +
+            '&a=' + eventAction +
+            '&l=' + eventLabel +
+            '&v=' + eventValue +
+            '&cur=' + eventCurrency
 
         if (state.sessionId) {
             query += '&sid=' + state.sessionId
@@ -27,7 +27,7 @@
         }
 
         const request = new XMLHttpRequest()
-        request.open('GET', process.env.BA_HOST + '/api' + query)
+        request.open('GET', process.env.BA_HOST + query)
         request.send()
     }
 
@@ -65,7 +65,7 @@
             const now = Math.round((new Date()).getTime() / 1000)
             const ttl = parseInt(process.env.BTM_SESSION_TTL, 10)
             const expiresAt = (new Date((now + ttl) * 1000))
-                .toGMTString()
+                .toUTCString()
 
             document.cookie = `barnebys_session=${btmTags['session_id']};` +
                 `expires=${expiresAt}`
@@ -84,7 +84,7 @@
             state.sessionId = determineSession(btmTags)
             state.locale = btmTags['locale']
         },
-        'send': (hitType, eventCategory, eventAction, eventLabel, eventValue) => {
+        'send': (hitType, eventCategory, eventAction, eventLabel, eventValue, eventCurrency) => {
             if (typeof hitType === 'object') {
                 const eventObject = hitType
                 sendEvent(eventObject)
@@ -97,6 +97,7 @@
                 eventAction,
                 eventLabel,
                 eventValue,
+                eventCurrency,
             })
         }
     }

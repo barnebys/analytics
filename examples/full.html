@@ -6,13 +6,16 @@
       a.async=1;
       a.src=g;
       m.parentNode.insertBefore(a,m)
-  })(window,document,'script','./public/bite.v1.js','ba');
+  })(window,document,'script','http://localhost:3000/bite.v1.js','ba');
 
-  window.ba('init', 'test')
+  window.ba('init', 'test-full')
   window.ba('send', 'event', 'click', 'thing')
   window.ba('send', {
       hitType: 'event',
       eventCategory: 'click',
       eventAction: 'thing',
+      eventLabel: 'a label',
+      eventValue: '100.0',
+      eventCurrency: 'EUR'
   })
 </script>

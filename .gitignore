@@ -1,5 +1,5 @@
 node_modules
 .idea
 .env
-api/key.json
+key.json
 public/*.js
