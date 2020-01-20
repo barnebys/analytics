@@ -3,14 +3,14 @@
   "build": {
     "env": {
       "BA_HOST": "@ba-host",
-      "BTM_SESSION_TTL": "@btm-session-ttl"
+      "BTM_SESSION_TTL": "@ba-btm-session-ttl"
     }
   },
   "env": {
-    "SESSION_NAME": "@session-name",
-    "SESSION_MAX_AGE": "@session-max-age",
-    "SECRET": "@secret",
-    "SITE_URL": "@site-url"
+    "SESSION_NAME": "@ba-session-name",
+    "SESSION_MAX_AGE": "@ba-session-max-age",
+    "SECRET": "@ba-secret",
+    "SITE_URL": "@ba-site-url"
   },
   "headers": [
     {

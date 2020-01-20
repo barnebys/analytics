@@ -30,15 +30,15 @@ to filter and/or segment your tracked events.
 
 **Click tracking example**
 
-`analytics.mydomain.com/?p=<programId>&d1=<dimension1>&k=click&url=https://github.com&s=<hash>`
+`analytics.mydomain.com/r/collect?_h=track&p=<programId>&d1=<dimension1>&k=click&url=https://github.com&s=<hash>`
 
 **Lead tracking example**
 
-`analytics.mydomain.com/?p=<programId>&k=click&url=https://yoursite.com&a=1&s=<hash>`
+`analytics.mydomain.com/r/collect?_h=trackp=<programId>&k=click&url=https://yoursite.com&a=1&s=<hash>`
 
 **Pixel tracking example** 
 
-`analytics.mydomain.com/?p=<programId>&k=impressionk&s=<hash>`
+`analytics.mydomain.com/r/collect?_h=track?p=<programId>&k=impressionk&s=<hash>`
 
 
 ## Hash for security 
@@ -53,7 +53,7 @@ By getting the md5 of `${secret} + ${uri}` and appending that hash to the uri wi
 3. Create a service account with admin permissions and fetch the json configuration
 4. Drop the json configuration as key.json in the `api/` directory
 5. Adjust settings for dotenv if needed
-6. Install dependencies and run start   `npm install` `npm run start`
+6. Run `now env`
 
 ## Deployment with Now
 
@@ -61,7 +61,6 @@ You can deploy to any node compatible machine but for ease and scalability we su
 
 ```
 now
-now alias ${deploymentUrl} ${productionFQDN}
 ```
 
 ## Environment Settings
@@ -74,6 +73,10 @@ now alias ${deploymentUrl} ${productionFQDN}
 ## Clients / Libraries
 
 [Barnebys Analytics PHP](https://github.com/barnebys/analytics-php)
+
+## Conversion Tracking
+
+[See the documentation](docs)
 
 ## Limitations with Google BigQuery
 
