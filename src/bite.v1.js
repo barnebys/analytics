@@ -32,7 +32,7 @@
         const queryString = Object.keys(query).map(key => key + '=' + query[key]).join('&');
 
         const request = new XMLHttpRequest()
-        request.open('GET', process.env.BA_HOST + queryString)
+        request.open('GET', `${process.env.BA_HOST}/r/collect?${queryString}`)
         request.send()
     }
 
