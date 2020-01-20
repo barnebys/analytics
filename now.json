@@ -25,12 +25,8 @@
   ],
   "rewrites": [
     {
-      "source": "/r/event",
-      "destination": "api/event"
-    },
-    {
-      "source": "/r/track",
-      "destination": "api/track"
+      "source": "/r/collect",
+      "destination": "api/collect"
     },
     {
       "source": "/v1/bite.js",

@@ -10,24 +10,29 @@
             throw new Error('BarnebysAnalytics is not initialized correctly')
         }
 
-        let query = '/r/event?p=' + state.programId +
-            '&_h=' + hitType +
-            '&c=' + eventCategory +
-            '&a=' + eventAction +
-            '&l=' + eventLabel +
-            '&v=' + eventValue +
-            '&cur=' + eventCurrency
+        const query = {
+            _h: hitType,
+            p: state.programId,
+            c: eventCategory,
+            a: eventAction,
+            l: eventLabel,
+            v: eventValue,
+            cur: eventCurrency,
+            url: window.location
+        }
 
         if (state.sessionId) {
-            query += '&sid=' + state.sessionId
+            query["sid"] = state.sessionId;
         }
 
         if (state.locale) {
-            query += '&locale=' + state.locale
+            query["locale"] = state.locale;
         }
 
+        const queryString = Object.keys(query).map(key => key + '=' + query[key]).join('&');
+
         const request = new XMLHttpRequest()
-        request.open('GET', process.env.BA_HOST + query)
+        request.open('GET', process.env.BA_HOST + queryString)
         request.send()
     }
 
