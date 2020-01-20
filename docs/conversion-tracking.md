@@ -1,4 +1,4 @@
-# Adding Barnebys Analytics to your site
+## Adding Barnebys Analytics to your site
 
 The bite.js library is a JavaScript library for measuring how Barnebys users interact 
 with your website. This document explains how to add bite.js to your site.
@@ -59,7 +59,8 @@ The send command has the following signature for the event hit type:
 | eventCategory | text | *yes* | Typically the object that was interacted with (e.g. 'bids')|
 | eventAction   | text | *yes* | The type of interaction (e.g. 'highest')|
 | eventLabel   | text |   no | Useful for categorizing events (e.g. 'my-objectId-123' |
-| eventValue   | integer |    no | A numeric value associated with the event (e.g. 500) |
+| eventValue   | integer |    no | A numeric value associated with the event (e.g. 500.0) |
+| eventCurrency   | ISO 4217 |    no | The local currency must be specified in the ISO 4217 standard. [Read Currency Codes Reference](supported-currencies.md).  |
 
 ## Examples
 
