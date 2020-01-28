@@ -1,7 +1,9 @@
 {
+  "scope": "barnebys",
   "version": 2,
   "build": {
     "env": {
+      "NPM_TOKEN": "@npm-token",
       "BA_HOST": "@ba-host",
       "BTM_SESSION_TTL": "@ba-btm-session-ttl"
     }
@@ -10,11 +12,21 @@
     "SESSION_NAME": "@ba-session-name",
     "SESSION_MAX_AGE": "@ba-session-max-age",
     "SECRET": "@ba-secret",
-    "SITE_URL": "@ba-site-url"
+    "SITE_URL": "@ba-site-url",
+    "FAUNADB_SECRET": "@ba-faunadb-secret"
   },
   "headers": [
     {
       "source": "/r/collect(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/r/create(.*)",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
@@ -36,6 +48,14 @@
     {
       "source": "/r/collect",
       "destination": "api/collect"
+    },
+    {
+      "source": "/r/create",
+      "destination": "api/reference/create"
+    },
+    {
+      "source": "/w/collect",
+      "destination": "api/webhook"
     },
     {
       "source": "/v1/bite.js",

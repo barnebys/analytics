@@ -8,9 +8,9 @@
       m.parentNode.insertBefore(a,m)
   })(window,document,'script','http://localhost:3000/bite.v1.js','ba');
 
-  window.ba('init', 'test-full')
-  window.ba('send', 'event', 'click', 'thing')
-  window.ba('send', {
+  ba('init', 'client-123', 'user-123,session-1')
+  ba('send', 'event', 'click', 'thing')
+  ba('send', {
       hitType: 'event',
       eventCategory: 'click',
       eventAction: 'thing',

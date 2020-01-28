@@ -46,6 +46,19 @@ This guide explains how to measure events with bite.js
 Events are user interactions with content that can be measured independently from a web page 
 or a screen load. User registration, bids, and final prize are all examples of actions 
 you might want to measure as Events.
+
+## Refs
+
+When using refs to support backend events `ba` needs to have a reference passed on, usually a userId. 
+Multiple refs can be used using a `,` to separate them.
+
+`ba('init', 'event', [refs]);`
+   
+## debug
+
+To enable console log for debugging add the debug action before. Make sure it's added before init to capture everything.
+
+`ba('debug');`
    
 ## Implementation
 

@@ -1,8 +1,34 @@
+import getBrowserFingerprint from "@barnebys/fingerprint"
+
 (function () {
     const state = {
+        debug: false,
         programId: null,
-        sessionId: null,
-        locale: null,
+        refs: null,
+        fingerprint: null
+    }
+
+    function log(type, state, query) {
+        if (!state.debug) {
+            return false
+        }
+
+        if (type === "init") {
+            console.log("%c Barnebys Analytics Initialized for " + state.programId, "font-size:1.5em;font-weight:bold;");
+            if (query.refs) {
+                console.log("%c BTM available, fingerprint [" + state.fingerprint + "] saved", "color:orange;font-weight:bold;");
+            } else {
+                console.log("%c No BTM, traffic source will be identified by fingerprint [" + state.fingerprint + "]", "color:red;font-weight:bold;");
+            }
+
+        }
+
+        if (type === "event") {
+            console.log("%c sending event for " + state.programId, "color:red;font-weight:bold;");
+            console.log("%c using fingerprint [" + state.fingerprint + "] with refs [" + state.refs + "]", "color:orange;font-weight:normal;");
+        }
+
+        console.table(query)
     }
 
     function sendEvent({ hitType, eventCategory, eventAction, eventLabel, eventValue, eventCurrency }) {
@@ -10,7 +36,18 @@
             throw new Error('BarnebysAnalytics is not initialized correctly')
         }
 
+        log("event", state, {
+            hitType,
+            eventCategory,
+            eventAction,
+            eventLabel,
+            eventValue,
+            eventCurrency
+        });
+
         const query = {
+            _f: state.fingerprint,
+            _r: state.refs,
             _h: hitType,
             p: state.programId,
             c: eventCategory,
@@ -19,14 +56,6 @@
             v: eventValue,
             cur: eventCurrency,
             url: window.location
-        }
-
-        if (state.sessionId) {
-            query["sid"] = state.sessionId;
-        }
-
-        if (state.locale) {
-            query["locale"] = state.locale;
         }
 
         const queryString = Object.keys(query).map(key => key + '=' + query[key]).join('&');
@@ -48,46 +77,27 @@
         }
 
         return {
-            'session_id': getParameterByName('btm_session_id'),
-            'locale': getParameterByName('btm_locale'),
+            'refs': getParameterByName('btm_refs')
         }
-    }
-
-    function determineSession(btmTags) {
-        const cookies = document.cookie
-            .split('; ')
-            .map(cookie => cookie.split('='))
-            .reduce((mapping, [key, value]) => ({
-                ...mapping,
-                [key]: value,
-            }), {})
-
-        if (cookies['barnebys_session']) {
-            return cookies['barnebys_session']
-        }
-
-        if (btmTags['session_id']) {
-            const now = Math.round((new Date()).getTime() / 1000)
-            const ttl = parseInt(process.env.BTM_SESSION_TTL, 10)
-            const expiresAt = (new Date((now + ttl) * 1000))
-                .toUTCString()
-
-            document.cookie = `barnebys_session=${btmTags['session_id']};` +
-                `expires=${expiresAt}`
-            return btmTags['session_id']
-        }
-
-        return null
     }
 
     const actions = {
-        'init': (programId) => {
-            state.programId = programId
+        'debug': () => {
+          state.debug=true
+        },
+        'init': (programId, refs) => {
+            state.programId = programId,
+            state.refs = refs
+            state.fingerprint = getBrowserFingerprint()
 
             const btmTags = extractBTMParameters()
+            if (btmTags['refs']) {
+                const request = new XMLHttpRequest()
+                request.open('GET', `${process.env.BA_HOST}/r/create?fingerprint=${state.fingerprint}&refs=${btmTags['refs']}&type=barnebys`)
+                request.send()
+            }
 
-            state.sessionId = determineSession(btmTags)
-            state.locale = btmTags['locale']
+            log("init", state, btmTags)
         },
         'send': (hitType, eventCategory, eventAction, eventLabel, eventValue, eventCurrency) => {
             if (typeof hitType === 'object') {
