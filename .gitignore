@@ -3,5 +3,6 @@ examples/*/node_modules
 examples/*/.next
 .idea
 .env
+.env.build
 key.json
 public/*.js
