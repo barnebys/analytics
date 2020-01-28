@@ -1,13 +1,15 @@
-import React from 'react'
-import Head from 'next/head'
-import Nav from '../components/nav'
+import React from "react";
+import Head from "next/head";
+import Nav from "../components/nav";
 
 const Home = () => (
   <div>
     <Head>
       <title>Home</title>
       <link rel="icon" href="/favicon.ico" />
-      <script dangerouslySetInnerHTML={{__html: `
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
         (function(i,s,o,g,r,a,m){
           i['BarnebysAnalyticsObject']=r;
           i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();
@@ -18,8 +20,9 @@ const Home = () => (
         })(window,document,'script','http://localhost:3000/bite.v1.js','ba');
         ba('debug');
         ba('init', 'client-123', 'user-123,session-1');
-      `}}>
-      </script>
+      `
+        }}
+      ></script>
     </Head>
 
     <Nav />
@@ -27,22 +30,36 @@ const Home = () => (
     <div className="hero">
       <h1 className="title">Welcome to Bite.js!</h1>
       <p className="description">
-          To simulate a click from barnebys click <a href="/?btm_refs=test-ref">here</a>
+        To simulate a click from barnebys click{" "}
+        <a href="/?btm_refs=test-ref">here</a>
       </p>
 
       <div className="row">
-        <a className="card" onClick={() => window.ba('send', 'event', 'login', 'signup')}>
+        <a
+          className="card"
+          onClick={() => window.ba("send", "event", "login", "signup")}
+        >
           <h3>Member signup event &rarr;</h3>
           <p>This will send a member signup event</p>
         </a>
-          <a className="card" onClick={() => window.ba('send', 'event', 'bid', 'new', '', '100.0', 'EUR')}>
-            <h3>Bid event &rarr;</h3>
-              <p>This will send a bid event</p>
-          </a>
-          <a className="card" onClick={() => window.ba('send', 'event', 'win', '', '', '100.0', 'EUR')}>
-              <h3>Win event &rarr;</h3>
-              <p>This will send a winning event</p>
-          </a>
+        <a
+          className="card"
+          onClick={() =>
+            window.ba("send", "event", "bid", "new", "", "100.0", "EUR")
+          }
+        >
+          <h3>Bid event &rarr;</h3>
+          <p>This will send a bid event</p>
+        </a>
+        <a
+          className="card"
+          onClick={() =>
+            window.ba("send", "event", "win", "", "", "100.0", "EUR")
+          }
+        >
+          <h3>Win event &rarr;</h3>
+          <p>This will send a winning event</p>
+        </a>
       </div>
     </div>
 
@@ -93,6 +110,6 @@ const Home = () => (
       }
     `}</style>
   </div>
-)
+);
 
-export default Home
+export default Home;
