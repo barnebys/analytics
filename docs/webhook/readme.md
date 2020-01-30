@@ -14,4 +14,4 @@ used to make an event server side
 
 See [example.http](example.http) for details on the request
 
-Response will be a JSON 200 on success containing `{status: "ok"}` and a JSON 400 on failure containing `{status: "failed", "error": "an error message}`  
+Response will be a JSON 200 on success containing `{status: "ok", affected: [{status, error, programId, ref, source}] }` and a JSON 400 on failure containing `{status: "failed", "error": "an error message}`  

@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
       data: {
         fingerprint,
         refs: refs.split(","),
-        type: _.get(res.query, "type", "default"),
+        type: _.get(req.query, "type", "default"),
         clientIP,
         userAgent: req.headers && req.headers["user-agent"]
       }

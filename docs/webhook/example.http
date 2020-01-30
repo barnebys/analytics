@@ -1,7 +1,8 @@
 POST http://localhost:3000/w/collect
 Content-Type: application/json
 
-{
+[
+  {
   "ref":  "user-123",
   "programId": "test-123",
   "eventCategory": "test",
@@ -9,6 +10,16 @@ Content-Type: application/json
   "eventLabel":  "test",
   "eventValue":  "100.0",
   "eventCurrency": "EUR"
-}
+  },
+  {
+    "ref":  "user-missing",
+    "programId": "test-123",
+    "eventCategory": "test",
+    "eventAction":  "test",
+    "eventLabel":  "test",
+    "eventValue":  "100.0",
+    "eventCurrency": "EUR"
+  }
+]
 
 ###

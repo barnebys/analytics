@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
       await res.json(ret);
     } catch (err) {
       res.status(404);
-      res.send("not found");
+      await res.json({ error: "not found" });
     }
   } else if (ref) {
     try {
@@ -29,11 +29,11 @@ module.exports = async (req, res) => {
       await res.json(ret);
     } catch (err) {
       res.status(404);
-      res.send("not found");
+      await res.json({ error: "not found" });
     }
   } else {
     res.status(400);
-    res.send("Missing ref or fingerprint");
+    await res.json({ error: "missing ref or fingerprint" });
   }
 
   res.end();
