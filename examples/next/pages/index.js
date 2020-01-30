@@ -37,7 +37,7 @@ const Home = () => (
       <div className="row">
         <a
           className="card"
-          onClick={() => window.ba("send", "event", "login", "signup")}
+          onClick={() => window.ba("send", "event", "sign in", "registration")}
         >
           <h3>Member signup event &rarr;</h3>
           <p>This will send a member signup event</p>
@@ -45,7 +45,15 @@ const Home = () => (
         <a
           className="card"
           onClick={() =>
-            window.ba("send", "event", "bid", "new", "", "100.0", "EUR")
+            window.ba(
+              "send",
+              "event",
+              "bids",
+              "winning",
+              "item-123",
+              "100.0",
+              "EUR"
+            )
           }
         >
           <h3>Bid event &rarr;</h3>
@@ -54,7 +62,15 @@ const Home = () => (
         <a
           className="card"
           onClick={() =>
-            window.ba("send", "event", "win", "", "", "100.0", "EUR")
+            window.ba(
+              "send",
+              "event",
+              "purchase",
+              "auction",
+              "item-123",
+              "100.0",
+              "EUR"
+            )
           }
         >
           <h3>Win event &rarr;</h3>
