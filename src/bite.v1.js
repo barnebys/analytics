@@ -20,17 +20,28 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
       );
       if (query.refs) {
         console.log(
-          "%c BTM available, fingerprint [" + state.fingerprint + "] saved",
+          "%c BTM available, source is Barnebys",
           "color:orange;font-weight:bold;"
         );
       } else {
         console.log(
-          "%c No BTM, traffic source will be identified by fingerprint [" +
-            state.fingerprint +
-            "]",
+          "%c No BTM, traffic source will be identified by fingerprint",
           "color:red;font-weight:bold;"
         );
       }
+    }
+
+    if (type === "fingerprint") {
+      console.log(
+        "%c Fingerprint [" +
+          state.fingerprint +
+          "] with refs [" +
+          query.refs +
+          "] sent",
+        "color:orange;font-weight:bold;"
+      );
+
+      console.table(query);
     }
 
     if (type === "event") {
@@ -46,9 +57,9 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
           "]",
         "color:orange;font-weight:normal;"
       );
-    }
 
-    console.table(query);
+      console.table(query);
+    }
   }
 
   function sendEvent({
@@ -110,25 +121,34 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
     };
   }
 
+  function sendFingerprint(refs) {
+    state.fingerprint = getBrowserFingerprint();
+
+    const request = new XMLHttpRequest();
+    request.open(
+      "GET",
+      `${process.env.BA_HOST}/r/create?fingerprint=${state.fingerprint}&refs=${refs}&type=barnebys`
+    );
+    request.send();
+
+    log("fingerprint", state, refs);
+  }
+
   const actions = {
     debug: () => {
       state.debug = true;
     },
+    refs: refs => {
+      state.refs = refs;
+      sendFingerprint({ refs });
+    },
     init: (programId, refs) => {
       (state.programId = programId), (state.refs = refs);
-      state.fingerprint = getBrowserFingerprint();
 
       const btmTags = extractBTMParameters();
-      if (btmTags["refs"]) {
-        const request = new XMLHttpRequest();
-        request.open(
-          "GET",
-          `${process.env.BA_HOST}/r/create?fingerprint=${state.fingerprint}&refs=${btmTags["refs"]}&type=barnebys`
-        );
-        request.send();
-      }
-
       log("init", state, btmTags);
+
+      sendFingerprint(btmTags);
     },
     send: (
       hitType,
