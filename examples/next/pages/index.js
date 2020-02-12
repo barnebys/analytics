@@ -76,6 +76,24 @@ const Home = () => (
           <h3>Win event &rarr;</h3>
           <p>This will send a winning event</p>
         </a>
+        <a
+          className="card"
+          onClick={() => {
+            window.ba("refs", "user-123");
+            window.ba(
+              "send",
+              "event",
+              "purchase",
+              "auction",
+              "item-123",
+              "100.0",
+              "EUR"
+            );
+          }}
+        >
+          <h3>SPA Event &rarr;</h3>
+          <p>This will send a bid event for SPA</p>
+        </a>
       </div>
     </div>
 

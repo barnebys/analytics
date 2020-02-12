@@ -53,6 +53,10 @@ When using refs to support backend events `ba` needs to have a reference passed 
 Multiple refs can be used using a `,` to separate them.
 
 `ba('init', 'event', [refs]);`
+
+When using SPA you might need to pass on refs after init was called. Do so by using the `refs` command. 
+
+`ba('refs', [refs])`
    
 ## debug
 
