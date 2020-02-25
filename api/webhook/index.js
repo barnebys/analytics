@@ -10,7 +10,7 @@ const getEvents = async (req, nowURL) => {
   return await Promise.all(
     events.map(async event => {
       return fetch(
-        `http://${nowURL}/api/reference/fetch?ref=${event.ref}`
+        `http://${nowURL}/r/fetch?ref=${event.ref}&programId=${event.programId}`
       ).then(async res => {
         const { data, error } = await res.json();
         return {
@@ -21,7 +21,7 @@ const getEvents = async (req, nowURL) => {
             userAgent: _.get(data, "userAgent", ""),
             action: event.eventAction,
             category: event.eventCategory,
-            source: res.status === 200 ? "barnebys" : "other",
+            source: _.get(data, "source", "unkown"),
             label: event.eventLabel || "",
             value: event.eventValue || "",
             currency: event.eventCurrency || ""

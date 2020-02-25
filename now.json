@@ -4,8 +4,7 @@
   "build": {
     "env": {
       "NPM_TOKEN": "@npm-token",
-      "BA_HOST": "@ba-host",
-      "BTM_SESSION_TTL": "@ba-btm-session-ttl"
+      "BA_HOST": "@ba-host"
     }
   },
   "env": {
@@ -35,6 +34,15 @@
       ]
     },
     {
+      "source": "/r/fetch(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=60, stale-while-revalidate"
+        }
+      ]
+    },
+    {
       "source": "/v1/bite.js",
       "headers": [
         {
@@ -52,6 +60,10 @@
     {
       "source": "/r/create",
       "destination": "api/reference/create"
+    },
+    {
+      "source": "/r/fetch",
+      "destination": "api/reference/fetch"
     },
     {
       "source": "/w/collect",

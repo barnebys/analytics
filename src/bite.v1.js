@@ -121,13 +121,15 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
     };
   }
 
-  function sendFingerprint(refs) {
-    state.fingerprint = getBrowserFingerprint();
-
+  function sendFingerprint(refs, type) {
     const request = new XMLHttpRequest();
     request.open(
       "GET",
-      `${process.env.BA_HOST}/r/create?fingerprint=${state.fingerprint}&refs=${refs}&type=barnebys`
+      `${process.env.BA_HOST}/r/create?fingerprint=${
+        state.fingerprint
+      }&refs=${refs}&programId=${state.programId}&type=${
+        !type ? "other" : type
+      }`
     );
     request.send();
 
@@ -143,12 +145,20 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
       sendFingerprint({ refs });
     },
     init: (programId, refs) => {
-      (state.programId = programId), (state.refs = refs);
+      (state.programId = programId),
+        (state.refs = refs),
+        (state.fingerprint = getBrowserFingerprint());
 
       const btmTags = extractBTMParameters();
       log("init", state, btmTags);
 
-      sendFingerprint(btmTags);
+      if (btmTags["refs"]) {
+        sendFingerprint(btmTags["refs"], "barnebys");
+      }
+
+      if (refs) {
+        sendFingerprint(refs);
+      }
     },
     send: (
       hitType,
