@@ -21,7 +21,7 @@ other script or CSS tags. Replace the string `BA_PROGRAM_ID` with your program i
       a.async=1;
       a.src=g;
       m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://analytics.barnebys.sh/bite.v1.js','ba');
+  })(window,document,'script','https://analytics.barnebys.sh/frågan ','ba');
 
   ba('init', 'BA_PROGRAM_ID');
 </script>

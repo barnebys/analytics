@@ -105,22 +105,6 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
     request.send();
   }
 
-  function extractBTMParameters() {
-    function getParameterByName(name) {
-      const url = window.location.href;
-      const cleanName = name.replace(/[\[\]]/g, "\\$&");
-      const regex = new RegExp("[?&]" + cleanName + "(=([^&#]*)|&|#|$)");
-      const results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return "";
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
-
-    return {
-      refs: getParameterByName("btm_refs")
-    };
-  }
-
   function sendFingerprint(refs, type) {
     const request = new XMLHttpRequest();
     request.open(
@@ -148,13 +132,6 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
       (state.programId = programId),
         (state.refs = refs),
         (state.fingerprint = getBrowserFingerprint());
-
-      const btmTags = extractBTMParameters();
-      log("init", state, btmTags);
-
-      if (btmTags["refs"]) {
-        sendFingerprint(btmTags["refs"], "barnebys");
-      }
 
       if (refs) {
         sendFingerprint(refs);

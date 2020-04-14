@@ -19,6 +19,7 @@ const getEvents = async (req, nowURL) => {
             url: "",
             clientIP: _.get(data, "clientIP", ""),
             userAgent: _.get(data, "userAgent", ""),
+            sessionId: _.get(data, "fingerprint", ""),
             action: event.eventAction,
             category: event.eventCategory,
             source: _.get(data, "source", "unkown"),
