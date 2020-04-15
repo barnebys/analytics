@@ -76,21 +76,21 @@ The send command has the following signature for the event hit type:
 | eventCategory | text | *yes* | Typically the object that was interacted with (e.g. 'bids')|
 | eventAction   | text | *yes* | The type of interaction (e.g. 'highest')|
 | eventLabel   | text |   no | Useful for categorizing events (e.g. 'my-objectId-123' |
-| eventValue   | integer |    no | A numeric value associated with the event (e.g. 500.0) |
+| eventValue   | decimal |    no | A decimal value associated with the event (e.g. 500.0) |
 | eventCurrency   | ISO 4217 |    no | The local currency must be specified in the ISO 4217 standard. [Read Currency Codes Reference](supported-currencies.md).  |
 
 ## Examples
 
 The following command sends an event to Barnebys Analytics indicating that the a new winning bid was placed on the lot "elvis-123":
 
-`ba('send', 'event', 'bids', 'winning', 'elvis-123');`
+`ba('send', 'event', 'bid', 'winning', 'elvis-123');`
 
 Note that as with all send commands, the fields passed in the convenience parameters may also be specified in the fieldsObject. The above command could be rewritten as:
 
 ```
 ba('send', {
   hitType: 'event',
-  eventCategory: 'bids',
+  eventCategory: 'bid',
   eventAction: 'winning',
   eventLabel: 'elvis-123'
 });
