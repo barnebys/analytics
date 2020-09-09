@@ -42,7 +42,7 @@ export default async (req, res) => {
 
     const now = new Date(Date.now()).toISOString();
 
-    const { "x-now-deployment-url": nowURL } = req.headers;
+    const { "x-vercel-deployment-url": nowURL } = req.headers;
 
     if (!nowURL) {
       throw new NotDeployedError();

@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
     return res.send("missing parameters");
   }
 
-  const { "x-now-deployment-url": nowURL } = req.headers;
+  const { "x-vercel-deployment-url": nowURL } = req.headers;
 
   if (!nowURL) {
     throw new NotDeployedError();

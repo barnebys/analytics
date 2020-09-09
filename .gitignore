@@ -6,3 +6,6 @@ examples/*/.next
 .env.build
 key.json
 public/*.js
+
+.now
+.vercel

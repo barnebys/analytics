@@ -84,7 +84,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "https://analytics-v1.barnebys.sh/$1"
+      "destination": "api/track$1"
     }
   ]
 }

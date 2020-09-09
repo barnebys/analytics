@@ -1,7 +1,7 @@
 const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env;
 
-import { collectEvent, collectTrack } from "../../lib/collect";
-import queryParser from "../../lib/queryParser";
+import { collectTrack } from "../lib/collect";
+import queryParser from "../lib/queryParser";
 
 const session = require("micro-cookie-session")({
   name: SESSION_NAME,
@@ -20,16 +20,24 @@ const redirect = (response, statusCode, redirectTarget) => {
   return response.end();
 };
 
-const handleTrack = async (req, res) => {
+module.exports = async (req, res) => {
   const { programId, kind, affiliate, url, secret } = queryParser(req.url);
 
-  const signedURL = req.url.slice(0, req.url.lastIndexOf("&s="));
+  const signedURL = req.url
+    .slice(0, req.url.lastIndexOf("&s="))
+    .replace(/%20/g, "+");
   const hash = md5(process.env.SECRET + signedURL);
 
+  if (!programId || !kind) {
+    if (SITE_URL) {
+      return redirect(res, 307, SITE_URL);
+    } else {
+      return res.status(204).end();
+    }
+  }
+
   if (hash !== secret) {
-    const err = new Error("Invalid `signed` value");
-    err.statusCode = 400;
-    throw err;
+    return res.status(400).send("Invalid signed value");
   }
 
   if (!programId || !kind) {
@@ -45,7 +53,11 @@ const handleTrack = async (req, res) => {
   session(req, res);
 
   // Run tracker async
-  await collectTrack(req, res);
+  try {
+    await collectTrack(req, res);
+  } catch (err) {
+    console.log(err);
+  }
 
   // Handle leads from affiliates
   if (affiliate) {
@@ -61,33 +73,5 @@ const handleTrack = async (req, res) => {
       "Content-Length": emptygif.emptyGifBufferLength,
       "Cache-Control": "public, max-age=0"
     });
-  }
-};
-
-const handleEvent = async (req, res) => {
-  const { programId, action, category } = queryParser(req.url);
-
-  if (!programId || !action || !category) {
-    console.log(
-      "Missing required `programId` and/or `action` and/or `category` values"
-    );
-  } else {
-    await collectEvent(req, res);
-  }
-
-  return emptygif.sendEmptyGif(req, res, {
-    "Content-Type": "image/gif",
-    "Content-Length": emptygif.emptyGifBufferLength,
-    "Cache-Control": "public, max-age=0"
-  });
-};
-
-module.exports = async (req, res) => {
-  const { hitType } = queryParser(req.url);
-
-  if (hitType === "event") {
-    return handleEvent(req, res);
-  } else {
-    return handleTrack(req, res);
   }
 };
