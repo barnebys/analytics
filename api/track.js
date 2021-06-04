@@ -6,7 +6,7 @@ import queryParser from "../lib/queryParser";
 const session = require("micro-cookie-session")({
   name: SESSION_NAME,
   keys: [SECRET],
-  maxAge: SESSION_MAX_AGE * 60 * 1000
+  maxAge: SESSION_MAX_AGE * 60 * 1000,
 });
 
 const md5 = require("md5");
@@ -15,7 +15,7 @@ const encodeUrl = require("encodeurl");
 
 const redirect = (response, statusCode, redirectTarget) => {
   response.writeHead(statusCode, {
-    Location: redirectTarget
+    Location: redirectTarget,
   });
   return response.end();
 };
@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     }
   }
 
-  if (hash !== secret) {
+  if (hash !== secret && kind !== "impression") {
     return res.status(400).send("Invalid signed value");
   }
 
@@ -71,7 +71,7 @@ module.exports = async (req, res) => {
     return emptygif.sendEmptyGif(req, res, {
       "Content-Type": "image/gif",
       "Content-Length": emptygif.emptyGifBufferLength,
-      "Cache-Control": "public, max-age=0"
+      "Cache-Control": "public, max-age=0",
     });
   }
 };
