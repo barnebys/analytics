@@ -36,7 +36,11 @@ module.exports = async (req, res) => {
     }
   }
 
-  if (hash !== secret && kind !== "impression") {
+  if (
+    hash !== secret &&
+    kind !== "impression" &&
+    kind !== "sponsored_lots_impression"
+  ) {
     return res.status(400).send("Invalid signed value");
   }
 
