@@ -1,31 +1,7 @@
 {
-  "arrowParens": "avoid",
+  "arrowParens": "always",
   "trailingComma": "es5",
   "useTabs": false,
   "semi": true,
-  "singleQuote": false,
-  "bracketSpacing": true,
-  "jsxBracketSameLine": false,
-  "tabWidth": 2,
-  "printWidth": 80,
-  "overrides": [
-    {
-      "files": [
-        "**/codemods/*/src/**/*.js",
-        "**/codemods/*/test/**/*.js",
-        "**/packages/*/src/**/*.js",
-        "**/packages/*/test/**/*.js"
-      ],
-      "options": {
-        "trailingComma": "all"
-      }
-    },
-    {
-      "files": ["**/packages/*/stories/**/*.md"],
-      "options": {
-        "tabWidth": 2,
-        "trailingComma": "all"
-      }
-    }
-  ]
+  "singleQuote": true
 }
