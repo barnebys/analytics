@@ -1,17 +1,17 @@
 const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env;
 
-import { collectTrack } from "../lib/collect";
-import queryParser from "../lib/queryParser";
+import { collectTrack } from '../lib/collect';
+import queryParser from '../lib/queryParser';
 
-const session = require("micro-cookie-session")({
+const session = require('micro-cookie-session')({
   name: SESSION_NAME,
   keys: [SECRET],
   maxAge: SESSION_MAX_AGE * 60 * 1000,
 });
 
-const md5 = require("md5");
-const emptygif = require("emptygif");
-const encodeUrl = require("encodeurl");
+const md5 = require('md5');
+const emptygif = require('emptygif');
+const encodeUrl = require('encodeurl');
 
 const redirect = (response, statusCode, redirectTarget) => {
   response.writeHead(statusCode, {
@@ -24,8 +24,8 @@ module.exports = async (req, res) => {
   const { programId, kind, affiliate, url, secret } = queryParser(req.url);
 
   const signedURL = req.url
-    .slice(0, req.url.lastIndexOf("&s="))
-    .replace(/%20/g, "+");
+    .slice(0, req.url.lastIndexOf('&s='))
+    .replace(/%20/g, '+');
   const hash = md5(process.env.SECRET + signedURL);
 
   if (!programId || !kind) {
@@ -36,12 +36,12 @@ module.exports = async (req, res) => {
     }
   }
 
-  if (hash !== secret && kind !== "impression") {
-    return res.status(400).send("Invalid signed value");
+  if (hash !== secret && kind !== 'impression') {
+    return res.status(400).send('Invalid signed value');
   }
 
   if (!programId || !kind) {
-    console.log("Missing required `programId` and/or `kind` values");
+    console.log('Missing required `programId` and/or `kind` values');
     if (SITE_URL) {
       return redirect(res, 307, SITE_URL);
     }
@@ -69,9 +69,9 @@ module.exports = async (req, res) => {
     redirect(res, 307, encodeUrl(url));
   } else {
     return emptygif.sendEmptyGif(req, res, {
-      "Content-Type": "image/gif",
-      "Content-Length": emptygif.emptyGifBufferLength,
-      "Cache-Control": "public, max-age=0",
+      'Content-Type': 'image/gif',
+      'Content-Length': emptygif.emptyGifBufferLength,
+      'Cache-Control': 'public, max-age=0',
     });
   }
 };
