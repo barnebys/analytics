@@ -1,28 +1,9 @@
 {
-  "babel": {
-    "plugins": [
-      "transform-inline-environment-variables"
-    ],
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "targets": "defaults, ie > 10"
-        }
-      ]
-    ]
-  },
-  "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/preset-env": "^7.7.6",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.0",
-    "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1",
-    "tinyify": "^2.5.2"
-  },
+  "main": "./app/index.js",
   "scripts": {
+    "build:server": "ncc build ./index.js -o app",
+    "start:dev": "dotenv micro",
+    "start": "micro",
     "build": "browserify -p tinyify -t babelify src/*.js > public/bite.v1.js",
     "precommit": "pretty-quick --staged"
   },
@@ -38,6 +19,32 @@
     "md5": "^2.3.0",
     "micro": "^9.3.4",
     "micro-cookie-session": "^2.0.0-beta.1",
+    "microrouter": "^3.1.3",
     "request-ip": "^2.1.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.6",
+    "@vercel/ncc": "^0.34.0",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
+    "babelify": "^10.0.0",
+    "browserify": "^16.5.0",
+    "dotenv-cli": "^5.1.0",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
+    "tinyify": "^2.5.2"
+  },
+  "babel": {
+    "plugins": [
+      "transform-inline-environment-variables"
+    ],
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": "defaults, ie > 10"
+        }
+      ]
+    ]
   }
 }

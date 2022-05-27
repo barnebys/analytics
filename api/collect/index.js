@@ -1,44 +1,43 @@
+import encodeUrl from 'encodeurl';
+import { send } from 'micro';
+import md5 from 'md5';
+import microSessionCookie from 'micro-cookie-session';
+
+import { collectEvent, collectTrack } from '../../lib/collect';
+import sendEmptyGif from '../../lib/sendEmptyGif';
+import queryParser from '../../lib/queryParser';
+
 const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env;
 
-import { collectEvent, collectTrack } from "../../lib/collect";
-import queryParser from "../../lib/queryParser";
-
-const session = require("micro-cookie-session")({
+const session = microSessionCookie({
   name: SESSION_NAME,
   keys: [SECRET],
-  maxAge: SESSION_MAX_AGE * 60 * 1000
+  maxAge: SESSION_MAX_AGE * 60 * 1000,
 });
 
-const md5 = require("md5");
-const emptygif = require("emptygif");
-const encodeUrl = require("encodeurl");
+function redirect(res, statusCode, redirectTarget) {
+  res.setHeader('Location', redirectTarget);
+  return send(res, statusCode);
+}
 
-const redirect = (response, statusCode, redirectTarget) => {
-  response.writeHead(statusCode, {
-    Location: redirectTarget
-  });
-  return response.end();
-};
-
-const handleTrack = async (req, res) => {
+async function handleTrack(req, res) {
   const { programId, kind, affiliate, url, secret } = queryParser(req.url);
 
-  const signedURL = req.url.slice(0, req.url.lastIndexOf("&s="));
+  const signedURL = req.url.slice(0, req.url.lastIndexOf('&s='));
   const hash = md5(process.env.SECRET + signedURL);
 
   if (hash !== secret) {
-    const err = new Error("Invalid `signed` value");
-    err.statusCode = 400;
-    throw err;
+    return send(res, 400, 'Invalid `signed` value');
   }
 
   if (!programId || !kind) {
-    console.log("Missing required `programId` and/or `kind` values");
+    console.log('Missing required `programId` and/or `kind` values');
+
     if (SITE_URL) {
       return redirect(res, 307, SITE_URL);
     }
 
-    return res.status(204).end();
+    return send(res, 204);
   }
 
   // Start session
@@ -54,40 +53,31 @@ const handleTrack = async (req, res) => {
   }
 
   if (url) {
-    redirect(res, 307, encodeUrl(url));
+    return redirect(res, 307, encodeUrl(url));
   } else {
-    return emptygif.sendEmptyGif(req, res, {
-      "Content-Type": "image/gif",
-      "Content-Length": emptygif.emptyGifBufferLength,
-      "Cache-Control": "public, max-age=0"
-    });
+    return sendEmptyGif(res);
   }
-};
+}
 
-const handleEvent = async (req, res) => {
+async function handleEvent(req, res) {
   const { programId, action, category } = queryParser(req.url);
 
   if (!programId || !action || !category) {
     console.log(
-      "Missing required `programId` and/or `action` and/or `category` values"
+      'Missing required `programId` and/or `action` and/or `category` values'
     );
   } else {
     await collectEvent(req, res);
   }
+  return sendEmptyGif(res);
+}
 
-  return emptygif.sendEmptyGif(req, res, {
-    "Content-Type": "image/gif",
-    "Content-Length": emptygif.emptyGifBufferLength,
-    "Cache-Control": "public, max-age=0"
-  });
-};
-
-module.exports = async (req, res) => {
+export default async function collectHandler(req, res) {
   const { hitType } = queryParser(req.url);
 
-  if (hitType === "event") {
+  if (hitType === 'event') {
     return handleEvent(req, res);
   } else {
     return handleTrack(req, res);
   }
-};
+}
