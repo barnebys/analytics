@@ -4,6 +4,7 @@ examples/*/.next
 .idea
 .env
 .env.build
+app
 key.json
 public/*.js
 

@@ -1,9 +1,13 @@
-import _ from "lodash";
-const requestIp = require("request-ip");
-const anonymize = require("ip-anonymize");
-import faunadb, { query as q } from "faunadb";
-import NotDeployedError from "../../../lib/error/NotDeployedError";
-import fetch from "isomorphic-unfetch";
+import _ from 'lodash';
+import { getClientIp } from 'request-ip';
+import anonymize from 'ip-anonymize';
+import faunadb, { query as q } from 'faunadb';
+
+import {
+  queryByFingerprintAndRef,
+  queryByFingerprint,
+  queryByRef,
+} from '../fetch';
 
 const { FAUNADB_SECRET: secret } = process.env;
 
@@ -13,58 +17,69 @@ if (secret) {
   client = new faunadb.Client({ secret });
 }
 
-module.exports = async (req, res) => {
+export default async function createHandler(req, res) {
   const { fingerprint, refs, programId } = req.query;
 
   if (!fingerprint || !refs || !programId) {
-    res.status(400);
-    return res.send("missing parameters");
+    return send(res, 403, 'missing parameters');
   }
 
-  const { "x-vercel-deployment-url": nowURL } = req.headers;
+  try {
+    const exists = await checkIfSessionExists(programId, fingerprint, refs);
 
-  if (!nowURL) {
-    throw new NotDeployedError();
-  }
+    if (exists) {
+      return send(res, 400, 'already created');
+    }
 
-  let match;
+    const clientIP = getAnonomizedIp(req);
 
-  if (fingerprint && !refs) {
-    match = await fetch(
-      `http://${nowURL}/r/fetch?fingerprint=${fingerprint}&programId=${programId}`
-    );
-  } else if (refs && !fingerprint) {
-    match = await fetch(
-      `http://${nowURL}/r/fetch?ref=${refs}&programId=${programId}`
-    );
-  } else {
-    match = await fetch(
-      `http://${nowURL}/r/fetch?fingerprint=${fingerprint}&ref=${refs}&programId=${programId}`
-    );
-  }
-
-  if (match.status === 200) {
-    res.send("already created");
-  } else {
-    let clientIP = requestIp.getClientIp(req);
-    try {
-      clientIP = anonymize(clientIP);
-    } catch (err) {}
-
-    const ret = await client.query(
-      q.Create(q.Collection("references"), {
+    await client.query(
+      q.Create(q.Collection('references'), {
         data: {
           fingerprint,
-          refs: refs.split(","),
-          type: _.get(req.query, "type", "other"),
+          refs: refs.split(','),
+          type: _.get(req.query, 'type', 'other'),
           programId,
           clientIP,
-          userAgent: req.headers && req.headers["user-agent"]
-        }
+          userAgent: req.headers && req.headers['user-agent'],
+        },
       })
     );
 
-    console.log(ret);
-    res.send("done");
+    return send(res, 200, 'done');
+  } catch (err) {
+    return send(res, 500, 'something went wrong');
   }
-};
+}
+
+function getAnonomizedIp(req) {
+  const clientIP = getClientIp(req);
+
+  try {
+    return anonymize(clientIP);
+  } catch (err) {
+    return clientIP;
+  }
+}
+
+async function checkIfSessionExists(programId, fingerprint, refs) {
+  if (fingerprint && refs) {
+    return await queryByFingerprintAndRef(programId, fingerprint, refs)
+      .then(() => true)
+      .catch(() => false);
+  }
+
+  if (fingerprint) {
+    return await queryByFingerprint(programId, fingerprint)
+      .then(() => true)
+      .catch(() => false);
+  }
+
+  if (refs) {
+    return await queryByRef(programId, refs)
+      .then(() => true)
+      .catch(() => false);
+  }
+
+  return false;
+}

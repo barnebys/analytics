@@ -1,26 +1,27 @@
-const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env;
+import encodeUrl from 'encodeurl';
+import microSession from 'micro-cookie-session';
+import { send } from 'micro';
+import md5 from 'md5';
 
 import { collectTrack } from '../lib/collect';
+
+import sendEmptyGif from '../lib/sendEmptyGif';
 import queryParser from '../lib/queryParser';
 
-const session = require('micro-cookie-session')({
+const { SESSION_NAME, SESSION_MAX_AGE, SECRET, SITE_URL } = process.env;
+
+const session = microSession({
   name: SESSION_NAME,
   keys: [SECRET],
   maxAge: SESSION_MAX_AGE * 60 * 1000,
 });
 
-const md5 = require('md5');
-const emptygif = require('emptygif');
-const encodeUrl = require('encodeurl');
-
-const redirect = (response, statusCode, redirectTarget) => {
-  response.writeHead(statusCode, {
-    Location: redirectTarget,
-  });
-  return response.end();
+const redirect = (res, statusCode, redirectTarget) => {
+  res.setHeader('Location', redirectTarget);
+  return send(res, statusCode);
 };
 
-module.exports = async (req, res) => {
+export default async function trackHandler(req, res) {
   const { programId, kind, affiliate, url, secret } = queryParser(req.url);
 
   const signedURL = req.url
@@ -32,12 +33,12 @@ module.exports = async (req, res) => {
     if (SITE_URL) {
       return redirect(res, 307, SITE_URL);
     } else {
-      return res.status(204).end();
+      return send(res, 200, 'sending something?');
     }
   }
 
   if (hash !== secret && kind !== 'impression') {
-    return res.status(400).send('Invalid signed value');
+    return send(res, 400, 'Invalid signed value');
   }
 
   if (!programId || !kind) {
@@ -46,7 +47,7 @@ module.exports = async (req, res) => {
       return redirect(res, 307, SITE_URL);
     }
 
-    return res.status(204).end();
+    return send(res, 200, 'here then?');
   }
 
   // Start session
@@ -66,12 +67,8 @@ module.exports = async (req, res) => {
   }
 
   if (url) {
-    redirect(res, 307, encodeUrl(url));
+    return redirect(res, 307, encodeUrl(url));
   } else {
-    return emptygif.sendEmptyGif(req, res, {
-      'Content-Type': 'image/gif',
-      'Content-Length': emptygif.emptyGifBufferLength,
-      'Cache-Control': 'public, max-age=0',
-    });
+    return sendEmptyGif(res);
   }
-};
+}
