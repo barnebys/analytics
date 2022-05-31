@@ -5,14 +5,18 @@ services:
     container_name: bbys-analytics
     build:
       context: ./
+      args:
+        NPM_TOKEN: ${NPM_TOKEN}
     restart: unless-stopped
+    volumes:
+      - .:/web-app
     ports:
       - "3004:3000"
     environment:
-      NPM_TOKEN: abc
-      SECRET: Secret%20!
-      SESSION_NAME: _ba
-      SESSION_MAX_AGE: 60
-      SITE_URL: https://www.barnebys.com
-      BIGQUERY_DATASET_ID: tracking_stg
+      NPM_TOKEN: ${NPM_TOKEN}
+      SECRET: ${SECRET}
+      SESSION_NAME: ${SESSION_NAME}
+      SESSION_MAX_AGE: ${SESSION_MAX_AGE}
+      SITE_URL: ${SITE_URL}
+      BIGQUERY_DATASET_ID: ${BIGQUERY_DATASET_ID}
       

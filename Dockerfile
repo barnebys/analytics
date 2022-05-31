@@ -4,16 +4,14 @@ FROM node:14
 # specified network ports at runtime
 EXPOSE 3000
 
-# RUN echo ${NPM_TOKEN}
-# ARG NPM_TOKEN  
-# COPY .npmrc .npmrc  
-# COPY package.json package.json  
-# RUN npm install  
-# RUN rm -f .npmrc
+
+ARG NPM_TOKEN
 
 # Changes working directory to the new directory just created
 WORKDIR /web-app
-COPY . .
+COPY . /web-app
+
+
 # Installs yarn dependencies on container
 # RUN yarn --production
 RUN yarn
@@ -21,6 +19,6 @@ RUN yarn
 
 RUN yarn build:server
 # Command container will actually run when called
-CMD ["yarn", "start"]
-# CMD ["yarn", "start:dev"]
+# CMD ["yarn", "start"]
+CMD ["yarn", "start:dev"]
 # CMD ["tail", "-f", "/dev/null"]
