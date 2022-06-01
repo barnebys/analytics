@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bbys-analytics-service-deploy
+  labels:
+    app: bbys-analytics-service-app
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: bbys-analytics-service-app
+  template:
+    metadata:
+      labels:
+        app: bbys-analytics-service-app
+    spec:
+      containers:
+        - name: bbys-analytics-service-nginx
+          image: bbyacr.azurecr.io/bbys-analytics-service_nodejs:__tagnr__
+          ports:
+            - containerPort: 80
+          env:
+              - name: NPM_TOKEN
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: npm-token
+              - name: SECRET
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: secret
+              - name: SESSION_NAME
+                value: _ba
+              - name: SESSION_MAX_AGE
+                value: 60
+              - name: SITE_URL
+                value: https://www.barnebys.com
+              - name: BIGQUERY_DATASET_ID
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: bq-dataset-id
+              - name: GCP_PROJECT_ID
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: gcp-project-id
+              - name: GCP_CLIENT_EMAIL
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: gcp-client-email
+              - name: GCP_CLIENT_PRIVATE_KEY
+                valueFrom:
+                    secretKeyRef:
+                        name: lots-service-secrets
+                        key: gcp-client-private-key
+              - name: APP_ENV
+                value: prod
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bbys-analytics-service-svc
+spec:
+  selector:
+    app: bbys-analytics-service-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bbys-lotsservice-ingress
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-barnebysnet-prod
+spec:
+  tls:
+    - hosts:
+        - analytics.barnebys.net
+      secretName: tls-secret-bbys-analytics-service
+  rules:
+  - host: analytics.barnebys.net
+    http:
+     paths:
+     - path: /
+       pathType: Prefix
+       backend:
+         service:
+           name: bbys-analytics-service-svc
+           port:
+             number: 80

@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@barnebys/fingerprint": "^1.0.0",
-    "@google-cloud/bigquery": "^0.11.1",
+    "@google-cloud/bigquery": "^6.0.0",
     "emptygif": "^0.1.2",
     "encodeurl": "^1.0.2",
     "faunadb": "^2.11.1",
@@ -19,6 +19,7 @@
     "md5": "^2.3.0",
     "micro": "^9.3.4",
     "micro-cookie-session": "^2.0.0-beta.1",
+    "micro-dev": "^3.0.0",
     "microrouter": "^3.1.3",
     "request-ip": "^2.1.3"
   },
