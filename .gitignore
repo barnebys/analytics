@@ -10,3 +10,5 @@ public/*.js
 
 .now
 .vercel
+.vscode
+.tool-versions
