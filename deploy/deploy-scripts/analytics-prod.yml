@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: bbys-analytics-service-nginx
-          image: bbyacr.azurecr.io/bbys-analytics-service_nodejs:__tagnr__
+          image: bbyacr.azurecr.io/bbys-analytics-service_nodejs:__TAGNR__
           ports:
             - containerPort: 80
           env:
