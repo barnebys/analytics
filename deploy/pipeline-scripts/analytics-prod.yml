@@ -43,16 +43,14 @@ steps:
     enableTransforms: false
     useLegacyPattern: false
     enableTelemetry: true
-- task: CmdLine@2
-  inputs:
-    script: 'cp .env.dist .env'
+
 - task: DockerCompose@0
   inputs:
     containerregistrytype: 'Azure Container Registry'
     azureSubscription: 'Betala per användning(9d70fa5e-375a-4821-80e2-de71cf699f03)'
     azureContainerRegistry: '{"loginServer":"bbyacr.azurecr.io", "id" : "/subscriptions/9d70fa5e-375a-4821-80e2-de71cf699f03/resourceGroups/infrastructure/providers/Microsoft.ContainerRegistry/registries/bbyacr"}'
     dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
-    projectName: 'bbys-lots-service'
+    projectName: 'bbys-analytics-service'
     action: 'Build services'
 
 - task: DockerCompose@0
@@ -61,7 +59,7 @@ steps:
     azureSubscription: 'Betala per användning(9d70fa5e-375a-4821-80e2-de71cf699f03)'
     azureContainerRegistry: '{"loginServer":"bbyacr.azurecr.io", "id" : "/subscriptions/9d70fa5e-375a-4821-80e2-de71cf699f03/resourceGroups/infrastructure/providers/Microsoft.ContainerRegistry/registries/bbyacr"}'
     dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
-    projectName: 'bbys-lots-service'
+    projectName: 'bbys-analytics-service'
     action: 'Push services'
 
 - task: CopyFiles@2
