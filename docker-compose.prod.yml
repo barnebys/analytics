@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   nodejs:
-    image: bbysanalyticsservice_nodejs:__TAGNR__
+    image: bbys-analytics-service_nodejs:__TAGNR__
     build:
       context: ./
       args:
