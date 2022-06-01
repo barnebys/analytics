@@ -2,24 +2,9 @@ version: '3.4'
 
 services:
   nodejs:
-    container_name: bbys-analytics
+    image: bbysanalyticsservice_nodejs:__tagnr__
     build:
       context: ./
-      args:
-        NPM_TOKEN: __NPM_TOKEN__
     restart: unless-stopped
-    volumes:
-      - .:/web-app
     ports:
-      - "3004:3000"
-    environment:
-      NPM_TOKEN: __NPM_TOKEN__
-      SECRET: __SECRET__
-      SESSION_NAME: __SESSION_NAME__
-      SESSION_MAX_AGE: __SESSION_MAX_AGE__
-      SITE_URL: __SITE_URL__
-      BIGQUERY_DATASET_ID: __BIGQUERY_DATASET_ID__
-      GCP_PROJECT_ID: __GCP_PROJECT_ID__
-      GCP_CLIENT_EMAIL: __GCP_CLIENT_EMAIL__
-      GCP_CLIENT_PRIVATE_KEY: __GCP_CLIENT_PRIVATE_KEY__
-      
+      - "3000:3000"
