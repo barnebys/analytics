@@ -2,11 +2,11 @@ version: '3.4'
 
 services:
   nodejs:
-    image: bbysanalyticsservice_nodejs:__tagnr__
+    image: bbysanalyticsservice_nodejs:__TAGNR__
     build:
       context: ./
       args:
-        NPM_TOKEN: ${NPM_TOKEN}
+        NPM_TOKEN: __NPM_TOKEN__
     restart: unless-stopped
     ports:
       - "3000:3000"
