@@ -5,6 +5,8 @@ services:
     image: bbysanalyticsservice_nodejs:__tagnr__
     build:
       context: ./
+      args:
+        NPM_TOKEN: ${NPM_TOKEN}
     restart: unless-stopped
     ports:
       - "3000:3000"
