@@ -9,17 +9,17 @@ export default async function BQHandler(req, res) {
     const now = new Date(Date.now()).toISOString();
     const tableName = 'events';
     const rows = [{
-        programId: "string",
-        url: "string",
-        clientIP: "string",
-        userAgent: "string",
-        category: "string",
-        action: "string",
-        label: "string",
-        value: "string",
-        currency: "string",
-        source: "string",
-        sessionId: "string",
+        programId: "dev_test",
+        url: "dev_test",
+        clientIP: "dev_test",
+        userAgent: "dev_test",
+        category: "dev_test",
+        action: "dev_test",
+        label: "dev_test",
+        value: "dev_test",
+        currency: "dev_test",
+        source: "dev_test",
+        sessionId: "dev_test",
         timestamp: now
       }];
 

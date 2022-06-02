@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:14 as deps
+FROM node:14 as dependencies
 # Informs Docker that the container listens on the
 # specified network ports at runtime
 EXPOSE 3000
@@ -19,8 +19,8 @@ EXPOSE 3000
 
 WORKDIR /web-app
 COPY . .
-COPY --from=deps /web-app/node_modules ./node_modules
-COPY --from=deps /web-app/.npmrc ./
+COPY --from=dependencies /web-app/node_modules ./node_modules
+COPY --from=dependencies /web-app/.npmrc ./
 
 RUN yarn build:server
 

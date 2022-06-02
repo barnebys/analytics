@@ -11,8 +11,9 @@ services:
     restart: unless-stopped
     volumes:
       - .:/web-app
+      - exclude:/web-app/node_modules/
     ports:
-      - "3004:3000"
+      - "3000:3000"
     environment:
       NPM_TOKEN: ${NPM_TOKEN}
       SECRET: ${SECRET}
@@ -23,4 +24,7 @@ services:
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
       GCP_CLIENT_EMAIL: ${GCP_CLIENT_EMAIL}
       GCP_CLIENT_PRIVATE_KEY: ${GCP_CLIENT_PRIVATE_KEY}
+
+volumes:
+    exclude:
       

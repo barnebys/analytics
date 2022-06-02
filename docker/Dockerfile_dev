@@ -1,9 +1,9 @@
 # Uses the node base image with the latest LTS version
-FROM node:16
+FROM node:14
 # Informs Docker that the container listens on the
 # specified network ports at runtime
 EXPOSE 3000
-
+ENV NODE_ENV=production
 
 ARG NPM_TOKEN
 
@@ -14,8 +14,8 @@ RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 
 
 # Installs yarn dependencies on container
-# RUN yarn --production
-RUN yarn
+RUN yarn install
+
 # RUN yarn add browserify
 
 RUN yarn build:server
