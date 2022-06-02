@@ -54,7 +54,7 @@ spec:
               - name: GCP_CLIENT_PRIVATE_KEY
                 valueFrom:
                     secretKeyRef:
-                        name: lots-service-secrets
+                        name: analytics-service-secrets
                         key: gcp-client-private-key
               - name: APP_ENV
                 value: prod
