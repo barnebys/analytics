@@ -5,6 +5,7 @@ services:
     container_name: bbys-analytics
     build:
       context: ./
+      dockerfile: ./docker/Dockerfile_dev
       args:
         NPM_TOKEN: ${NPM_TOKEN}
     restart: unless-stopped

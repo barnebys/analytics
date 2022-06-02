@@ -1,5 +1,5 @@
 # Uses the node base image with the latest LTS version
-FROM node:14
+FROM node:16
 # Informs Docker that the container listens on the
 # specified network ports at runtime
 EXPOSE 3000
@@ -10,6 +10,7 @@ ARG NPM_TOKEN
 # Changes working directory to the new directory just created
 WORKDIR /web-app
 COPY . /web-app
+RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 
 
 # Installs yarn dependencies on container
