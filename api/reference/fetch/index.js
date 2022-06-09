@@ -43,16 +43,27 @@ export async function queryByRefAndTraffic(programId, ref) {
 }
 
 export async function queryByFingerprint(programId, fingerprint) {
-  const ret = await client.query(
-    q.Get(
-      q.Intersection(
-        q.Match(q.Index('fingerprint'), fingerprint),
-        q.Match(q.Index('programId'), programId)
+  console.log('we are here inside fxn');
+  // console.log(client);
+  // console.log(q);
+  console.log(programId, fingerprint);
+  
+  try {
+    const ret = await client.query(
+      q.Get(
+        q.Intersection(
+          q.Match(q.Index('fingerprint'), fingerprint),
+          q.Match(q.Index('programId'), programId)
+        )
       )
-    )
-  );
-  delete ret.ref;
-  return ret;
+    );
+    delete ret.ref;
+    return ret;
+  } catch (error) {
+    console.log('here is the error');
+    console.log(error);
+  }
+  
 }
 
 const setTrafficSource = async (reference) => {
