@@ -1,5 +1,6 @@
 {
   "main": "./app/index.js",
+  "license": "MIT",
   "scripts": {
     "build:server": "ncc build ./index.js -o app",
     "start:dev": "dotenv micro-dev",
@@ -10,6 +11,7 @@
   "dependencies": {
     "@barnebys/fingerprint": "^1.0.0",
     "@google-cloud/bigquery": "^6.0.0",
+    "@vercel/ncc": "^0.34.0",
     "emptygif": "^0.1.2",
     "encodeurl": "^1.0.2",
     "faunadb": "^2.11.1",
@@ -20,19 +22,17 @@
     "micro": "^9.3.4",
     "micro-cookie-session": "^2.0.0-beta.1",
     "microrouter": "^3.1.3",
-    "request-ip": "^2.1.3",
-    "@vercel/ncc": "^0.34.0"
+    "request-ip": "^2.1.3"
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.6",
-    
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "babelify": "^10.0.0",
     "browserify": "^16.5.0",
+    "dotenv": "^16.0.1",
     "dotenv-cli": "^5.1.0",
     "micro-dev": "^3.0.0",
-    "dotenv": "^16.0.1",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "tinyify": "^2.5.2"

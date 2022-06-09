@@ -30,6 +30,11 @@ spec:
                     secretKeyRef:
                         name: analytics-service-secrets
                         key: secret
+              - name: FAUNADB_SECRET
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: faunadb-secret
               - name: SESSION_NAME
                 value: _ba
               - name: SESSION_MAX_AGE
