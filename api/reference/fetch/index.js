@@ -3,7 +3,7 @@ import { send } from 'micro';
 
 const { FAUNADB_SECRET: secret } = process.env;
 
-if (secret) {
+if (!secret) {
   console.error('%c FaunaDB Error: Missing Secret.', "color:red");
 }
 
