@@ -3,25 +3,32 @@ import { send } from 'micro';
 
 const { FAUNADB_SECRET: secret } = process.env;
 
-let client;
-
 if (secret) {
-  client = new faunadb.Client({ secret });
+  console.error('%c FaunaDB Error: Missing Secret.', "color:red");
 }
 
+const client = new faunadb.Client({ secret });
+
 export async function queryByFingerprintAndRef(programId, fingerprint, ref) {
-  const result = await client.query(
-    q.Get(
-      q.Intersection(
+  let result = null;
+  try {
+    
+    result = await client.query(
+      q.Get(
         q.Intersection(
-          ...getIntersectionRef(ref),
-          q.Match(q.Index('programId'), programId),
-          q.Match(q.Index('fingerprint'), fingerprint)
+          q.Intersection(
+            ...getIntersectionRef(ref),
+            q.Match(q.Index('programId'), programId),
+            q.Match(q.Index('fingerprint'), fingerprint)
+          )
         )
       )
-    )
-  );
-  delete result.ref;
+    );
+    delete result.ref;
+
+  } catch (error) {
+    // cache miss
+  }
   return result;
 }
 
@@ -43,10 +50,6 @@ export async function queryByRefAndTraffic(programId, ref) {
 }
 
 export async function queryByFingerprint(programId, fingerprint) {
-  console.log('we are here inside fxn');
-  // console.log(client);
-  // console.log(q);
-  console.log(programId, fingerprint);
   
   try {
     const ret = await client.query(
