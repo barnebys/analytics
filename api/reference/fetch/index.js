@@ -63,8 +63,7 @@ export async function queryByFingerprint(programId, fingerprint) {
     delete ret.ref;
     return ret;
   } catch (error) {
-    console.log('here is the error');
-    console.log(error);
+    // cache miss
   }
   
 }
