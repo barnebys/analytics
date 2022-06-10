@@ -7,9 +7,10 @@ import fetchHandler from './api/reference/fetch';
 import collectHandler from './api/collect';
 import webhookHandler from './api/webhook';
 import trackHandler from './api/track';
-import BQHandler from './api/test/bigquery'
+import healthHandler from './api/test/healthCheck'
 
 export default router(
+  get('/health-check', healthHandler),
   get('/favicon.ico', (_req, res) => send(res, 204)),
   // probably serve static files in another way later
   // get('/bite.v1.js', async (_req, res) => {
@@ -25,6 +26,5 @@ export default router(
   get('/r/create', createHandler),
   get('/r/fetch', fetchHandler),
   post('/w/collect', webhookHandler),
-  post('/bq/test', BQHandler),
   get('/*', trackHandler)
 );
