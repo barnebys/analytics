@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { getClientIp } from 'request-ip';
 import anonymize from 'ip-anonymize';
 import faunadb, { query as q } from 'faunadb';
+import { send } from 'micro';
 
 import {
   queryByFingerprintAndRef,
