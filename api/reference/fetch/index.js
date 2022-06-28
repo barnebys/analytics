@@ -10,8 +10,8 @@ if (!secret) {
 const client = new faunadb.Client({ secret });
 
 export async function queryByFingerprintAndRef(programId, fingerprint, ref) {
+  console.log(programId, fingerprint, ref);
   let result = null;
-  try {
     
     result = await client.query(
       q.Get(
@@ -26,9 +26,6 @@ export async function queryByFingerprintAndRef(programId, fingerprint, ref) {
     );
     delete result.ref;
 
-  } catch (error) {
-    // cache miss
-  }
   return result;
 }
 
@@ -51,21 +48,16 @@ export async function queryByRefAndTraffic(programId, ref) {
 
 export async function queryByFingerprint(programId, fingerprint) {
   
-  try {
-    const ret = await client.query(
-      q.Get(
-        q.Intersection(
-          q.Match(q.Index('fingerprint'), fingerprint),
-          q.Match(q.Index('programId'), programId)
-        )
+  const ret = await client.query(
+    q.Get(
+      q.Intersection(
+        q.Match(q.Index('fingerprint'), fingerprint),
+        q.Match(q.Index('programId'), programId)
       )
-    );
-    delete ret.ref;
-    return ret;
-  } catch (error) {
-    // cache miss
-  }
-  
+    )
+  );
+  delete ret.ref;
+  return ret;
 }
 
 const setTrafficSource = async (reference) => {
