@@ -1,15 +1,12 @@
-# Install dependencies only when needed
 FROM node:14 as dependencies
-# Informs Docker that the container listens on the
-# specified network ports at runtime
+
 EXPOSE 3000
 ARG NPM_TOKEN
-# Changes working directory to the new directory just created
+
 WORKDIR /web-app
 COPY package.json yarn.lock ./
 RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 
-# Installs yarn dependencies on container
 RUN yarn --production
 
 FROM node:14 as builder
@@ -23,9 +20,7 @@ COPY --from=dependencies /web-app/node_modules ./node_modules
 COPY --from=dependencies /web-app/.npmrc ./
 
 RUN yarn build
-RUN yarn build:server
 
-# Production image, copy all the files and run next
 FROM node:14 as runner
 
 ENV NODE_ENV=production
@@ -37,9 +32,7 @@ WORKDIR /web-app
 
 COPY --from=builder /web-app/node_modules ./node_modules
 COPY --from=builder /web-app/app ./app
-COPY --from=builder /web-app/public ./
+COPY --from=builder /web-app/public ./public
 COPY --from=builder /web-app/package.json ./
 
-
-# Command container will actually run when called
 CMD ["yarn", "start"]
