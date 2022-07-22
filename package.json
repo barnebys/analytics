@@ -2,7 +2,7 @@
   "main": "./app/index.js",
   "license": "MIT",
   "scripts": {
-    "build:server": "ncc build ./index.js -o app",
+    "build:server": "browserify -p tinyify -t babelify src/*.js > public/bite.v1.js && ncc build ./index.js -o app",
     "start:dev": "dotenv micro-dev",
     "start": "micro",
     "build": "browserify -p tinyify -t babelify src/*.js > public/bite.v1.js",
