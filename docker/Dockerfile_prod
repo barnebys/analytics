@@ -36,6 +36,7 @@ WORKDIR /web-app
 
 COPY --from=builder /web-app/node_modules ./node_modules
 COPY --from=builder /web-app/app ./app
+COPY --from=builder /web-app/public ./
 COPY --from=builder /web-app/package.json ./
 
 
