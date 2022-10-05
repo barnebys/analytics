@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { queryByFingerprintAndRef } from '../reference/fetch';
-import { send, json } from 'micro';
+import { send } from '../../lib/responseHandler';
+import { json } from 'micro';
 
 import { dataStoreEvent } from '../../lib/datastore';
 
@@ -37,7 +38,7 @@ const getEvents = async (req) => {
 
 export default async function collectHandler(req, res) {
   if (req.method !== 'POST') {
-    return send(res, 403, { status: 'error', error: 'method not allowed' });
+    return send(req, res, 403, { status: 'error', error: 'method not allowed' });
   }
   // todo check for mandatory values
 
@@ -70,5 +71,5 @@ export default async function collectHandler(req, res) {
     }
   });
 
-  return send(res, 201, { status: 'ok', data: response });
+  return send(req, res, 201, { status: 'ok', data: response });
 }

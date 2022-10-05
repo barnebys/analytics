@@ -35,12 +35,6 @@ spec:
                     secretKeyRef:
                         name: analytics-service-secrets
                         key: faunadb-secret
-              - name: SESSION_NAME
-                value: _ba
-              - name: SESSION_MAX_AGE
-                value: "60"
-              - name: SITE_URL
-                value: https://www.barnebys.com
               - name: BIGQUERY_DATASET_ID
                 valueFrom:
                     secretKeyRef:
@@ -61,6 +55,17 @@ spec:
                     secretKeyRef:
                         name: analytics-service-secrets
                         key: gcp-client-private-key
+              - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: ai-connection-string
+              - name: SESSION_NAME
+                value: _ba
+              - name: SESSION_MAX_AGE
+                value: "60"
+              - name: SITE_URL
+                value: https://www.barnebys.com
               - name: APP_ENV
                 value: prod
 ---

@@ -1,5 +1,5 @@
 import faunadb, { query as q } from 'faunadb';
-import { send } from 'micro';
+import { send } from '../../../lib/responseHandler';
 
 const { FAUNADB_SECRET: secret } = process.env;
 
@@ -97,31 +97,27 @@ export default async function fetchHandler(req, res) {
 
   if (fingerprint && ref) {
     try {
-      return send(
-        res,
-        200,
-        await queryByFingerprintAndRef(programId, fingerprint, ref)
-      );
+      return send(req, res, 200, await queryByFingerprintAndRef(programId, fingerprint, ref));
     } catch (err) {
-      return send(res, 404, { error: 'not found' });
+      return send(req, res, 404, { error: 'not found' });
     }
   }
 
   if (fingerprint) {
     try {
-      return send(res, 200, await queryByFingerprint(programId, fingerprint));
+      return send(req, res, 200, await queryByFingerprint(programId, fingerprint));
     } catch (err) {
-      return send(res, 404, { error: 'not found' });
+      return send(req, res, 404, { error: 'not found' });
     }
   }
 
   if (ref) {
     try {
-      return send(res, 200, await queryByRefAndTraffic(programId, ref));
+      return send(req, res, 200, await queryByRefAndTraffic(programId, ref));
     } catch (err) {
-      return send(res, 404, { error: 'not found' });
+      return send(req, res, 404, { error: 'not found' });
     }
   }
 
-  return send(res, 400, { error: 'missing ref or fingerprint' });
+  return send(req, res, 400, { error: 'Missing required `ref` or `fingerprint` value' });
 }

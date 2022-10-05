@@ -1,6 +1,6 @@
 import {BigQuery} from "@google-cloud/bigquery";
 import faunadb, { query as q }  from 'faunadb';
-import { send } from 'micro'
+import { send } from '../../lib/responseHandler';
 
 export default async function healthHandler(req, res) {
     
@@ -19,7 +19,7 @@ export default async function healthHandler(req, res) {
 
     } catch (error) {
         console.error('FaunaDB connection failed');
-        return send(res, 500, { msg: 'FaunaDB Error' })
+        return send(req, res, 500, { msg: 'FaunaDB Error' })
     }
     
     try {
@@ -35,9 +35,8 @@ export default async function healthHandler(req, res) {
         .getMetadata();
 
     } catch (error) {
-        console.error('BigQuery connection failed');
-        return send(res, 500, { msg: 'BigQuery Error' })
+        return send(req, res, 500, { msg: 'BigQuery Error:BigQuery connection failed' })
     }
 
-    return send(res, 200, { msg: 'Ok' })
+    return send(req, res, 200, { msg: 'Ok' })
 }

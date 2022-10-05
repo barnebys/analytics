@@ -1,9 +1,9 @@
 import { dataStoreEvent } from '../../lib/datastore';
-import { send } from 'micro'
+import { send } from '../../lib/responseHandler';
 
 export default async function BQHandler(req, res) {
     if (req.method !== 'POST') {
-      return send(res, 403, { status: 'error', error: 'method not allowed' });
+      return send(req, res, 403, { status: 'error', error: 'method not allowed' });
     }
   
     const now = new Date(Date.now()).toISOString();
@@ -36,5 +36,5 @@ export default async function BQHandler(req, res) {
       console.log('Inserted');
     });
   
-    return send(res, 200, {'message': "OK"});
+    return send(req, res, 200, {'message': "OK"});
   }

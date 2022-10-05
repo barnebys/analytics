@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { getClientIp } from 'request-ip';
 import anonymize from 'ip-anonymize';
 import faunadb, { query as q } from 'faunadb';
-import { send } from 'micro';
+import { send } from '../../../lib/responseHandler';
 
 import {
   queryByFingerprintAndRef,
@@ -22,14 +22,14 @@ export default async function createHandler(req, res) {
   const { fingerprint, refs, programId } = req.query;
 
   if (!fingerprint || !refs || !programId) {
-    return send(res, 403, 'missing parameters');
+    return send(req, res, 403, 'Missing required `fingerprint`, `refs`  and/or `programId` values');
   }
 
   try {
     const exists = await checkIfSessionExists(programId, fingerprint, refs);
 
     if (exists) {
-      return send(res, 400, 'already created');
+      return send(req, res, 400, 'already created');
     }
 
     const clientIP = getAnonomizedIp(req);
@@ -47,9 +47,9 @@ export default async function createHandler(req, res) {
       })
     );
 
-    return send(res, 200, 'done');
+    return send(req, res, 200, 'done');
   } catch (err) {
-    return send(res, 500, 'something went wrong');
+    return send(req, res, 500, 'something went wrong');
   }
 }
 

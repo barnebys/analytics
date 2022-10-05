@@ -1,6 +1,6 @@
 import encodeUrl from 'encodeurl';
 import microSession from 'micro-cookie-session';
-import { send } from 'micro';
+import { send, redirect } from '../lib/responseHandler';
 import md5 from 'md5';
 
 import { collectTrack } from '../lib/collect';
@@ -16,11 +16,6 @@ const session = microSession({
   maxAge: SESSION_MAX_AGE * 60 * 1000,
 });
 
-const redirect = (res, statusCode, redirectTarget) => {
-  res.setHeader('Location', redirectTarget);
-  return send(res, statusCode);
-};
-
 export default async function trackHandler(req, res) {
   const { programId, kind, affiliate, url, secret } = queryParser(req.url);
 
@@ -31,24 +26,16 @@ export default async function trackHandler(req, res) {
 
   if (!programId || !kind) {
     if (SITE_URL) {
-      return redirect(res, 307, SITE_URL);
+      return redirect(req, res, 307, SITE_URL, 'Missing required `programId` and/or `kind` values');
     } else {
-      return send(res, 200, 'sending something?');
+      return send(req, res, 500, 'Redirect URL not configured.');
     }
   }
 
   if (hash !== secret && kind !== 'impression') {
-    return send(res, 400, 'Invalid signed value');
+    return send(req, res, 400, 'Invalid signed value');
   }
 
-  if (!programId || !kind) {
-    console.log('Missing required `programId` and/or `kind` values');
-    if (SITE_URL) {
-      return redirect(res, 307, SITE_URL);
-    }
-
-    return send(res, 200, 'here then?');
-  }
 
   // Start session
   session(req, res);
@@ -67,8 +54,8 @@ export default async function trackHandler(req, res) {
   }
 
   if (url) {
-    return redirect(res, 307, encodeUrl(url));
+    return redirect(req, res, 307, encodeUrl(url), `Redirecting to url`);
   } else {
-    return sendEmptyGif(res);
+    return sendEmptyGif(req, res);
   }
 }
