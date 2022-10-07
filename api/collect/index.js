@@ -59,7 +59,7 @@ async function handleEvent(req, res) {
     console.log(
       'Missing required `programId` and/or `action` and/or `category` values'
     );
-    return send(req, res, 500, 'Missing required `programId` and/or `action` and/or `category` values');
+    return send(req, res, 400, 'Missing required `programId` and/or `action` and/or `category` values');
   } else {
     await collectEvent(req, res);
   }

@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bbys-analytics-staging-service-deploy
+  labels:
+    app: bbys-analytics-staging-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bbys-analytics-staging-service-app
+  template:
+    metadata:
+      labels:
+        app: bbys-analytics-staging-service-app
+    spec:
+      containers:
+        - name: bbys-analytics-staging-service-nginx
+          image: bbyacr.azurecr.io/bbys-analytics-staging-service_nodejs:__TAGNR__
+          ports:
+            - containerPort: 80
+          env:
+              - name: NPM_TOKEN
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: npm-token
+              - name: SECRET
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: secret
+              - name: FAUNADB_SECRET
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-staging-service-secrets
+                        key: faunadb-secret
+              - name: BIGQUERY_DATASET_ID
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-staging-service-secrets
+                        key: bq-dataset-id
+              - name: GCP_PROJECT_ID
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: gcp-project-id
+              - name: GCP_CLIENT_EMAIL
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: gcp-client-email
+              - name: GCP_CLIENT_PRIVATE_KEY
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: gcp-client-private-key
+              - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: ai-connection-string
+              - name: SESSION_NAME
+                value: _ba
+              - name: SESSION_MAX_AGE
+                value: "60"
+              - name: SITE_URL
+                value: https://platform-feature.barnebys.sh
+              - name: APP_ENV
+                value: stg
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bbys-analytics-staging-service-svc
+spec:
+  selector:
+    app: bbys-analytics-staging-service-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bbys-analytics-ingress
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-barnebysnet-prod
+spec:
+  tls:
+    - hosts:
+        - analytics-staging.barnebys.net
+      secretName: tls-secret-bbys-analytics-staging-service
+    
+  rules:
+  - host: analytics-staging.barnebys.net
+    http:
+     paths:
+     - path: /
+       pathType: Prefix
+       backend:
+         service:
+           name: bbys-analytics-staging-service-svc
+           port:
+             number: 80

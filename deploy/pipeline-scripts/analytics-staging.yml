@@ -1,0 +1,76 @@
+# Starter pipeline
+
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: replacetokens@4
+  displayName: Replace tokens in Dockerfile
+  inputs:
+    rootDirectory: '$(Build.SourcesDirectory)/'
+    targetFiles: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
+    encoding: 'auto'
+    tokenPattern: 'custom'
+    tokenPrefix: '__'
+    tokenSuffix: '__'
+    writeBOM: true
+    actionOnMissing: 'fail'
+    keepToken: false
+    actionOnNoFiles: 'fail'
+    enableTransforms: false
+    useLegacyPattern: false
+    enableTelemetry: true
+- task: replacetokens@4
+  displayName: Replace tokens in deploy files
+  inputs:
+    rootDirectory: '$(Build.SourcesDirectory)/'
+    targetFiles: '$(Build.SourcesDirectory)/deploy/deploy-scripts/*.yml'
+    encoding: 'auto'
+    tokenPattern: 'custom'
+    tokenPrefix: '__'
+    tokenSuffix: '__'
+    writeBOM: true
+    actionOnMissing: 'fail'
+    keepToken: false
+    actionOnNoFiles: 'fail'
+    enableTransforms: false
+    useLegacyPattern: false
+    enableTelemetry: true
+
+- task: DockerCompose@0
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'Betala per användning(9d70fa5e-375a-4821-80e2-de71cf699f03)'
+    azureContainerRegistry: '{"loginServer":"bbyacr.azurecr.io", "id" : "/subscriptions/9d70fa5e-375a-4821-80e2-de71cf699f03/resourceGroups/infrastructure/providers/Microsoft.ContainerRegistry/registries/bbyacr"}'
+    dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
+    projectName: 'bbys-analytics-service'
+    action: 'Build services'
+
+- task: DockerCompose@0
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'Betala per användning(9d70fa5e-375a-4821-80e2-de71cf699f03)'
+    azureContainerRegistry: '{"loginServer":"bbyacr.azurecr.io", "id" : "/subscriptions/9d70fa5e-375a-4821-80e2-de71cf699f03/resourceGroups/infrastructure/providers/Microsoft.ContainerRegistry/registries/bbyacr"}'
+    dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
+    projectName: 'bbys-analytics-service'
+    action: 'Push services'
+
+- task: CopyFiles@2
+  displayName: Copy deploy files to build artifact
+  inputs:
+    Contents: '$(Build.SourcesDirectory)/deploy/deploy-scripts/*.yml'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish build artifact to deploy pipeline
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
