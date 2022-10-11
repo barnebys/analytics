@@ -5,7 +5,7 @@ metadata:
   labels:
     app: bbys-analytics-service-app
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: bbys-analytics-service-app
