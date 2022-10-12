@@ -21,7 +21,7 @@ other script or CSS tags. Replace the string `BA_PROGRAM_ID` with your program i
       a.async=1;
       a.src=g;
       m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://analytics.barnebys.com/bite.v1.js','ba');
+  })(window,document,'script','https://analytics.barnebys.net/bite.v1.js','ba');
 
   ba('init', 'BA_PROGRAM_ID');
 </script>
@@ -31,7 +31,7 @@ other script or CSS tags. Replace the string `BA_PROGRAM_ID` with your program i
 ### The above code does four main things:
 
 1. Creates a `<script>` element that starts asynchronously downloading the bite.js 
-   JavaScript library from https://analytics.barnebys.com/bite.v1.js 
+   JavaScript library from https://analytics.barnebys.net/bite.v1.js 
 2. Initializes a global ba function (called the ba() command queue) that allows you to schedule 
    commands to be run once the bite.js library is loaded and ready to go.
 3. Adds a command to the ba() command queue to create a new tracker object for the property specified
