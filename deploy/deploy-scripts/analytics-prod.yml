@@ -68,6 +68,8 @@ spec:
                 value: https://www.barnebys.com
               - name: APP_ENV
                 value: prod
+              - name: BA_HOST
+                value: https://analytics.barnebys.net
 ---
 apiVersion: v1
 kind: Service
