@@ -5,7 +5,7 @@ metadata:
   labels:
     app: bbys-analytics-service-app
 spec:
-  replicas: 4
+  replicas: 5
   selector:
     matchLabels:
       app: bbys-analytics-service-app
@@ -96,21 +96,10 @@ spec:
   tls:
     - hosts:
         - analytics.barnebys.net
-        - analytics-stg.barnebys.com
       secretName: tls-secret-bbys-analytics-service
     
   rules:
   - host: analytics.barnebys.net
-    http:
-     paths:
-     - path: /
-       pathType: Prefix
-       backend:
-         service:
-           name: bbys-analytics-service-svc
-           port:
-             number: 80
-  - host: analytics-stg.barnebys.com
     http:
      paths:
      - path: /
