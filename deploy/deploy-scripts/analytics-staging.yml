@@ -68,6 +68,8 @@ spec:
                 value: https://platform-feature.barnebys.sh
               - name: APP_ENV
                 value: stg
+              - name: BA_HOST
+                value: https://analytics.barnebys.net
 ---
 apiVersion: v1
 kind: Service

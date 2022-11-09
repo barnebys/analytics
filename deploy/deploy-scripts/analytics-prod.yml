@@ -5,7 +5,7 @@ metadata:
   labels:
     app: bbys-analytics-service-app
 spec:
-  replicas: 4
+  replicas: 5
   selector:
     matchLabels:
       app: bbys-analytics-service-app
@@ -60,6 +60,16 @@ spec:
                     secretKeyRef:
                         name: analytics-service-secrets
                         key: ai-connection-string
+              - name: EVENTHUB_CONNECTION_STRING
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: eventhub-connection-string
+              - name: EVENTHUB_NAME
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: eventhub-name
               - name: SESSION_NAME
                 value: _ba
               - name: SESSION_MAX_AGE
@@ -68,6 +78,8 @@ spec:
                 value: https://www.barnebys.com
               - name: APP_ENV
                 value: prod
+              - name: BA_HOST
+                value: https://analytics.barnebys.net
 ---
 apiVersion: v1
 kind: Service
@@ -94,21 +106,10 @@ spec:
   tls:
     - hosts:
         - analytics.barnebys.net
-        - analytics-stg.barnebys.com
       secretName: tls-secret-bbys-analytics-service
     
   rules:
   - host: analytics.barnebys.net
-    http:
-     paths:
-     - path: /
-       pathType: Prefix
-       backend:
-         service:
-           name: bbys-analytics-service-svc
-           port:
-             number: 80
-  - host: analytics-stg.barnebys.com
     http:
      paths:
      - path: /

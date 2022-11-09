@@ -101,7 +101,7 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
       .join("&");
 
     const request = new XMLHttpRequest();
-    request.open("GET", `${process.env.BA_HOST}/r/collect?${queryString}`);
+    request.open("GET", `https://analytics.barnebys.net/r/collect?${queryString}`);
     request.send();
   }
 
@@ -109,7 +109,7 @@ import getBrowserFingerprint from "@barnebys/fingerprint";
     const request = new XMLHttpRequest();
     request.open(
       "GET",
-      `${process.env.BA_HOST}/r/create?fingerprint=${
+      `https://analytics.barnebys.net/r/create?fingerprint=${
         state.fingerprint
       }&refs=${refs}&programId=${state.programId}&type=${
         !type ? "other" : type
