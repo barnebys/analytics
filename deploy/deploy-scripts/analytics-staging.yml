@@ -60,6 +60,16 @@ spec:
                     secretKeyRef:
                         name: analytics-service-secrets
                         key: ai-connection-string
+              - name: EVENTHUB_CONNECTION_STRING
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: eventhub-connection-string
+              - name: EVENTHUB_NAME
+                valueFrom:
+                    secretKeyRef:
+                        name: analytics-service-secrets
+                        key: eventhub-name
               - name: SESSION_NAME
                 value: _ba
               - name: SESSION_MAX_AGE
