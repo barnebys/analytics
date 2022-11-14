@@ -86,6 +86,7 @@ kind: Service
 metadata:
   name: bbys-analytics-staging-service-svc
 spec:
+  externalTrafficPolicy: Local
   selector:
     app: bbys-analytics-staging-service-app
   ports:
@@ -103,7 +104,6 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-barnebysnet-prod
 spec:
-  externalTrafficPolicy: local
   tls:
     - hosts:
         - analytics-staging.barnebys.net
