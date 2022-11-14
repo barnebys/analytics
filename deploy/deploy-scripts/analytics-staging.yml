@@ -103,6 +103,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-barnebysnet-prod
 spec:
+  externalTrafficPolicy: local
   tls:
     - hosts:
         - analytics-staging.barnebys.net
