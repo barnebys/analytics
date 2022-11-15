@@ -3,7 +3,7 @@ FROM node:14
 # Informs Docker that the container listens on the
 # specified network ports at runtime
 EXPOSE 3000
-ENV NODE_ENV=production
+ENV NODE_ENV=dev
 
 ARG NPM_TOKEN
 
@@ -16,10 +16,10 @@ RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 # Installs yarn dependencies on container
 RUN yarn install
 
-# RUN yarn add browserify
+RUN yarn add browserify
 
 RUN yarn build:server
 # Command container will actually run when called
-# CMD ["yarn", "start"]
-CMD ["yarn", "start:dev"]
-# CMD ["tail", "-f", "/dev/null"]
+#CMD ["yarn", "start"]
+# CMD ["yarn", "start:dev"]
+CMD ["tail", "-f", "/dev/null"]
