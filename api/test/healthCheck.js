@@ -7,10 +7,11 @@ export default async function healthHandler(req, res) {
   console.log(req.headers['X-Forwarded-For']);
 
   return send(req, res, 200, {
-      msg: req.headers,
-    });
-    
-    //   let clientIP = JSON.stringify(requestIp.getClientIpFromXForwardedFor(req));
+    msg: req.headers,
+    ip: requestIp.getClientIp(req),
+  });
+
+  let clientIP = JSON.stringify(requestIp.getClientIpFromXForwardedFor(req));
   const { FAUNADB_SECRET: secret } = process.env;
   const {
     BIGQUERY_DATASET_ID,
