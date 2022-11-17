@@ -1,0 +1,38 @@
+FROM node:14 as dependencies
+
+EXPOSE 3000
+ARG NPM_TOKEN
+
+WORKDIR /web-app
+COPY package.json yarn.lock ./
+RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+
+RUN yarn --production
+
+FROM node:14 as builder
+
+ENV NODE_ENV=staging
+EXPOSE 3000
+
+WORKDIR /web-app
+COPY . .
+COPY --from=dependencies /web-app/node_modules ./node_modules
+COPY --from=dependencies /web-app/.npmrc ./
+
+RUN yarn build
+
+FROM node:14 as runner
+
+ENV NODE_ENV=staging
+EXPOSE 3000
+
+ARG NPM_TOKEN
+
+WORKDIR /web-app
+
+COPY --from=builder /web-app/node_modules ./node_modules
+COPY --from=builder /web-app/app ./app
+COPY --from=builder /web-app/public ./public
+COPY --from=builder /web-app/package.json ./
+
+CMD ["yarn", "start"]

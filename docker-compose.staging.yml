@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  nodejs:
+    image: bbys-analytics-staging-service_nodejs:__TAGNR__
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile_prod
+      args:
+        NPM_TOKEN: __NPM_TOKEN__
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
