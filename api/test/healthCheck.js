@@ -1,17 +1,8 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import faunadb, { query as q } from 'faunadb';
-import requestIp from 'request-ip';
 import { send } from '../../lib/responseHandler';
 
 export default async function healthHandler(req, res) {
-  console.log(req.headers['X-Forwarded-For']);
-
-  return send(req, res, 200, {
-    msg: req.headers,
-    ip: requestIp.getClientIp(req),
-  });
-
-  let clientIP = JSON.stringify(requestIp.getClientIpFromXForwardedFor(req));
   const { FAUNADB_SECRET: secret } = process.env;
   const {
     BIGQUERY_DATASET_ID,

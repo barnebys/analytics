@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: bbys-analytics-staging-service-nginx
-          image: bbyacr.azurecr.io/bbys-analytics-staging-service_nodejs:__TAGNR__
+          image: bbyacr.azurecr.io/bbys-analytics-staging-service_nodejs:14108
           ports:
             - containerPort: 80
           env:
@@ -86,8 +86,6 @@ kind: Service
 metadata:
   name: bbys-analytics-staging-service-svc
 spec:
-  # externalTrafficPolicy: Local
-  # type: ClusterIP
   selector:
     app: bbys-analytics-staging-service-app
   ports:
