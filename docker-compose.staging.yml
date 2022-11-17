@@ -5,7 +5,7 @@ services:
     image: bbys-analytics-staging-service_nodejs:__TAGNR__
     build:
       context: ./
-      dockerfile: ./docker/Dockerfile_prod
+      dockerfile: ./docker/Dockerfile_dev
       args:
         NPM_TOKEN: __NPM_TOKEN__
     restart: unless-stopped

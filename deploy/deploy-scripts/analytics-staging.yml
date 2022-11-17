@@ -86,7 +86,6 @@ kind: Service
 metadata:
   name: bbys-analytics-staging-service-svc
 spec:
-  externalTrafficPolicy: Local
   selector:
     app: bbys-analytics-staging-service-app
   ports:
