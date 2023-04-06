@@ -2,6 +2,8 @@ import encodeUrl from 'encodeurl';
 import microSession from 'micro-cookie-session';
 import { send } from 'micro';
 import md5 from 'md5';
+const querystring = require("querystring");
+import { parse } from 'node:url';
 
 import { collectTrack } from '../lib/collect';
 
@@ -22,12 +24,15 @@ const redirect = (res, statusCode, redirectTarget) => {
 };
 
 export default async function trackHandler(req, res) {
+  const { query: queryParams } = parse(req.url, true);
+  if(queryParams.s) {
+    delete queryParams.s;
+  }
+  
   const { programId, kind, affiliate, url, secret } = queryParser(req.url);
-
-  const signedURL = req.url
-    .slice(0, req.url.lastIndexOf('&s='))
-    .replace(/%20/g, '+');
-  const hash = md5(process.env.SECRET + signedURL);
+  
+  const query = "/?" + querystring.stringify(queryParams);
+  const hash = md5(process.env.SECRET + query);
 
   if (!programId || !kind) {
     if (SITE_URL) {
