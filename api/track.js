@@ -3,6 +3,9 @@ import microSession from 'micro-cookie-session';
 import { send, redirect } from '../lib/responseHandler';
 import md5 from 'md5';
 
+const querystring = require('querystring');
+import { parse } from 'node:url';
+
 import { collectTrack } from '../lib/collect';
 
 import sendEmptyGif from '../lib/sendEmptyGif';
@@ -17,16 +20,24 @@ const session = microSession({
 });
 
 export default async function trackHandler(req, res) {
+  const { query: queryParams } = parse(req.url, true);
+  if (queryParams.s) {
+    delete queryParams.s;
+  }
   const { programId, kind, affiliate, url, secret } = queryParser(req.url);
 
-  const signedURL = req.url
-    .slice(0, req.url.lastIndexOf('&s='))
-    .replace(/%20/g, '+');
-  const hash = md5(process.env.SECRET + signedURL);
+  const query = '/?' + querystring.stringify(queryParams);
+  const hash = md5(process.env.SECRET + query);
 
   if (!programId || !kind) {
     if (SITE_URL) {
-      return redirect(req, res, 307, SITE_URL, 'Missing required `programId` and/or `kind` values');
+      return redirect(
+        req,
+        res,
+        307,
+        SITE_URL,
+        'Missing required `programId` and/or `kind` values'
+      );
     } else {
       return send(req, res, 500, 'Redirect URL not configured.');
     }
@@ -35,7 +46,6 @@ export default async function trackHandler(req, res) {
   if (hash !== secret && kind !== 'impression') {
     return send(req, res, 400, 'Invalid signed value');
   }
-
 
   // Start session
   session(req, res);
