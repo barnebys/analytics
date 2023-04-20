@@ -7,6 +7,13 @@
 trigger:
 - master
 
+variables:
+  - name: azure-subscription
+    value: 'Microsoft Azure Sponsorship -- traffic(a096cb2c-44a3-4f14-893b-893da3a2be21)'
+  - name: container-registry
+    value: '{"loginServer":"crtrafficplatformbbyprod.azurecr.io", "id" : "/subscriptions/a096cb2c-44a3-4f14-893b-893da3a2be21/resourceGroups/rg-traffic-platform-prod/providers/Microsoft.ContainerRegistry/registries/crtrafficplatformbbyprod"}'
+  
+
 pool:
   vmImage: ubuntu-latest
 
@@ -47,8 +54,8 @@ steps:
 - task: DockerCompose@0
   inputs:
     containerregistrytype: 'Azure Container Registry'
-    azureSubscription: 'Betala per användning(9d70fa5e-375a-4821-80e2-de71cf699f03)'
-    azureContainerRegistry: '{"loginServer":"bbyacr.azurecr.io", "id" : "/subscriptions/9d70fa5e-375a-4821-80e2-de71cf699f03/resourceGroups/infrastructure/providers/Microsoft.ContainerRegistry/registries/bbyacr"}'
+    azureSubscription: $(azure-subscription)
+    azureContainerRegistry: $(container-registry)
     dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
     projectName: 'bbys-analytics-service'
     action: 'Build services'
@@ -56,8 +63,8 @@ steps:
 - task: DockerCompose@0
   inputs:
     containerregistrytype: 'Azure Container Registry'
-    azureSubscription: 'Betala per användning(9d70fa5e-375a-4821-80e2-de71cf699f03)'
-    azureContainerRegistry: '{"loginServer":"bbyacr.azurecr.io", "id" : "/subscriptions/9d70fa5e-375a-4821-80e2-de71cf699f03/resourceGroups/infrastructure/providers/Microsoft.ContainerRegistry/registries/bbyacr"}'
+    azureSubscription: $(azure-subscription)
+    azureContainerRegistry: $(container-registry)
     dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
     projectName: 'bbys-analytics-service'
     action: 'Push services'
