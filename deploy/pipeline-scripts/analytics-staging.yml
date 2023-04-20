@@ -90,7 +90,7 @@ steps:
     kubernetesServiceEndpoint: $(kubernetes-service-endpoint)
     command: 'apply'
     useConfigurationFile: true
-    configuration: '$(Build.SourcesDirectory)deploy/deploy-scripts/analytics-staging.yml'
+    configuration: '$(Build.SourcesDirectory)/deploy/deploy-scripts/analytics-staging.yml'
     secretType: 'dockerRegistry'
     containerRegistryType: 'Azure Container Registry'
     checkLatest: true
