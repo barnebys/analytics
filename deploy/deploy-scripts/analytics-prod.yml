@@ -107,9 +107,22 @@ spec:
     - hosts:
         - analytics.barnebys.net
       secretName: tls-secret-bbys-analytics-service
+    - hosts:
+        - analytics.barnebys.com
+      secretName: tls-secret-bbys-analytics-com-service
     
   rules:
   - host: analytics.barnebys.net
+    http:
+     paths:
+     - path: /
+       pathType: Prefix
+       backend:
+         service:
+           name: bbys-analytics-service-svc
+           port:
+             number: 80
+  - host: analytics.barnebys.com
     http:
      paths:
      - path: /
