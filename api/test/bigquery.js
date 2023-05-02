@@ -29,7 +29,7 @@ export default async function BQHandler(req, res) {
       const { insertErrors } = err.response;
   
       if (insertErrors && insertErrors.length > 0) {
-        console.log('Insert errors:');
+        console.log(`Insert errors [${tableName}]:`);
         insertErrors.forEach((err) => console.error(err));
       }
     }).then(abc=>{
