@@ -1,4 +1,4 @@
-FROM node:14 as dependencies
+FROM node:16 as dependencies
 
 EXPOSE 3000
 ARG NPM_TOKEN
@@ -9,7 +9,7 @@ RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 
 RUN yarn --production
 
-FROM node:14 as builder
+FROM node:16 as builder
 
 ENV NODE_ENV=production
 EXPOSE 3000
@@ -21,7 +21,7 @@ COPY --from=dependencies /web-app/.npmrc ./
 
 RUN yarn build
 
-FROM node:14 as runner
+FROM node:16 as runner
 
 ENV NODE_ENV=production
 EXPOSE 3000
