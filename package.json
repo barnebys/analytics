@@ -10,7 +10,6 @@
     "precommit": "pretty-quick --staged"
   },
   "dependencies": {
-    "@azure/event-hubs": "^5.8.0",
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.6",
     "@barnebys/fingerprint": "^1.0.0",
