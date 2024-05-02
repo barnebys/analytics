@@ -7,7 +7,8 @@
     "start:dev": "dotenv micro-dev",
     "start": "micro",
     "build:js": "browserify -p tinyify -t babelify src/*.js > public/bite.v1.js",
-    "precommit": "pretty-quick --staged"
+    "precommit": "pretty-quick --staged",
+    "preview:feature": "./scripts/build-deploy-staging.sh"
   },
   "dependencies": {
     "@babel/core": "^7.7.7",
