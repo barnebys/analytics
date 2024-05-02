@@ -1,7 +1,6 @@
 trigger:
-  branches:
-    include:
-      - master
+  - master
+pr: none
 
 variables:
   - name: azure-subscription
