@@ -13,6 +13,7 @@ variables:
 
 pool:
   vmImage: ubuntu-latest
+
 stages:
   - stage: BuildStage
     jobs:
