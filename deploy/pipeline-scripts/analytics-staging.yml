@@ -1,11 +1,7 @@
-# Starter pipeline
-
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- develop
+  branches:
+      include:
+        - feature-*
 
 variables:
   - name: azure-subscription
@@ -13,7 +9,7 @@ variables:
   - name: container-registry
     value: '{"loginServer":"crtrafficplatformbbyprod.azurecr.io", "id" : "/subscriptions/a096cb2c-44a3-4f14-893b-893da3a2be21/resourceGroups/rg-traffic-platform-prod/providers/Microsoft.ContainerRegistry/registries/crtrafficplatformbbyprod"}'
   - name: kubernetes-service-endpoint
-    value: 'aks-traffic-backend-connection'
+    value: 'aks-traffic-backend-prod-v1.27'
 
 pool:
   vmImage: ubuntu-latest

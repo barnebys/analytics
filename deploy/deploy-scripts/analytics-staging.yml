@@ -38,7 +38,7 @@ spec:
               - name: BIGQUERY_DATASET_ID
                 valueFrom:
                     secretKeyRef:
-                        name: analytics-staging-service-secrets
+                        name: analytics-service-secrets
                         key: bq-dataset-id
               - name: GCP_PROJECT_ID
                 valueFrom:
@@ -75,11 +75,11 @@ spec:
               - name: SESSION_MAX_AGE
                 value: "60"
               - name: SITE_URL
-                value: https://platform-feature.barnebys.sh
+                value: https://se-stg.bbys.io
               - name: APP_ENV
                 value: stg
               - name: BA_HOST
-                value: https://analytics.barnebys.net
+                value: https://analytics-staging.barnebys.net
 ---
 apiVersion: v1
 kind: Service
