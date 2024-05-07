@@ -1,83 +1,118 @@
-# Starter pipeline
-
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- master
+  - master
+pr: none
 
 variables:
   - name: azure-subscription
     value: 'Microsoft Azure Sponsorship -- traffic(a096cb2c-44a3-4f14-893b-893da3a2be21)'
   - name: container-registry
     value: '{"loginServer":"crtrafficplatformbbyprod.azurecr.io", "id" : "/subscriptions/a096cb2c-44a3-4f14-893b-893da3a2be21/resourceGroups/rg-traffic-platform-prod/providers/Microsoft.ContainerRegistry/registries/crtrafficplatformbbyprod"}'
-  
+  - name: kubernetes-service-endpoint
+    value: 'aks-traffic-backend-prod-v1.27'
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- task: replacetokens@4
-  displayName: Replace tokens in Dockerfile
-  inputs:
-    rootDirectory: '$(Build.SourcesDirectory)/'
-    targetFiles: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
-    encoding: 'auto'
-    tokenPattern: 'custom'
-    tokenPrefix: '__'
-    tokenSuffix: '__'
-    writeBOM: true
-    actionOnMissing: 'fail'
-    keepToken: false
-    actionOnNoFiles: 'fail'
-    enableTransforms: false
-    useLegacyPattern: false
-    enableTelemetry: true
-- task: replacetokens@4
-  displayName: Replace tokens in deploy files
-  inputs:
-    rootDirectory: '$(Build.SourcesDirectory)/'
-    targetFiles: '$(Build.SourcesDirectory)/deploy/deploy-scripts/*.yml'
-    encoding: 'auto'
-    tokenPattern: 'custom'
-    tokenPrefix: '__'
-    tokenSuffix: '__'
-    writeBOM: true
-    actionOnMissing: 'fail'
-    keepToken: false
-    actionOnNoFiles: 'fail'
-    enableTransforms: false
-    useLegacyPattern: false
-    enableTelemetry: true
+stages:
+  - stage: BuildStage
+    jobs:
+      - job: Build
+        displayName: Build and push image to Azure Container Registry
+        steps:
+        - task: replacetokens@4
+          displayName: Replace tokens in Dockerfile
+          inputs:
+            rootDirectory: '$(Build.SourcesDirectory)/'
+            targetFiles: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
+            encoding: 'auto'
+            tokenPattern: 'custom'
+            tokenPrefix: '__'
+            tokenSuffix: '__'
+            writeBOM: true
+            actionOnMissing: 'fail'
+            keepToken: false
+            actionOnNoFiles: 'fail'
+            enableTransforms: false
+            useLegacyPattern: false
+            enableTelemetry: true
+       
+        - task: DockerCompose@0
+          inputs:
+            containerregistrytype: 'Azure Container Registry'
+            azureSubscription: $(azure-subscription)
+            azureContainerRegistry: $(container-registry)
+            dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
+            projectName: 'bbys-analytics-service'
+            action: 'Build services'
 
-- task: DockerCompose@0
-  inputs:
-    containerregistrytype: 'Azure Container Registry'
-    azureSubscription: $(azure-subscription)
-    azureContainerRegistry: $(container-registry)
-    dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
-    projectName: 'bbys-analytics-service'
-    action: 'Build services'
+        - task: DockerCompose@0
+          inputs:
+            containerregistrytype: 'Azure Container Registry'
+            azureSubscription: $(azure-subscription)
+            azureContainerRegistry: $(container-registry)
+            dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
+            projectName: 'bbys-analytics-service'
+            action: 'Push services'
 
-- task: DockerCompose@0
-  inputs:
-    containerregistrytype: 'Azure Container Registry'
-    azureSubscription: $(azure-subscription)
-    azureContainerRegistry: $(container-registry)
-    dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.prod.yml'
-    projectName: 'bbys-analytics-service'
-    action: 'Push services'
+        - task: CopyFiles@2
+          displayName: Copy deploy files to build artifact
+          inputs:
+            Contents: '$(Build.SourcesDirectory)/deploy/deploy-scripts/*.yml'
+            TargetFolder: '$(build.artifactstagingdirectory)'
 
-- task: CopyFiles@2
-  displayName: Copy deploy files to build artifact
-  inputs:
-    Contents: '$(Build.SourcesDirectory)/deploy/deploy-scripts/*.yml'
-    TargetFolder: '$(build.artifactstagingdirectory)'
+        - task: PublishBuildArtifacts@1
+          displayName: Publish build artifact to deploy pipeline
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: 'Container'
 
-- task: PublishBuildArtifacts@1
-  displayName: Publish build artifact to deploy pipeline
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+  - stage: DeployStage
+    dependsOn: BuildStage
+    jobs:
+      - job: waitForValidation
+        displayName: Wait for external validation
+        pool: server
+        timeoutInMinutes: 5 # job times out in 3 days
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 5
+            inputs:
+              notifyUsers: |
+                matteo.cinti@barnebys.com
+                nikhil.unni@barnebys.com
+                sony.sebastian@barnebys.com
+              instructions: "Please validate the deployment to production of this build"
+              onTimeout: "fail"
+      - job: Deploy
+        dependsOn: "waitForValidation"
+        variables:
+          GIT_COMMIT: $[ stageDependencies.BuildStage.Build.outputs['ProduceVar.GIT_COMMIT'] ]
+        steps:
+          - task: replacetokens@4
+            displayName: Replace tokens in deploy files
+            inputs:
+              rootDirectory: '$(Build.SourcesDirectory)/'
+              targetFiles: '$(Build.SourcesDirectory)/deploy/deploy-scripts/*.yml'
+              encoding: 'auto'
+              tokenPattern: 'custom'
+              tokenPrefix: '__'
+              tokenSuffix: '__'
+              writeBOM: true
+              actionOnMissing: 'fail'
+              keepToken: false
+              actionOnNoFiles: 'fail'
+              enableTransforms: false
+              useLegacyPattern: false
+              enableTelemetry: true
+
+          - task: Kubernetes@1
+            inputs:
+              connectionType: "Kubernetes Service Connection"
+              kubernetesServiceEndpoint: $(kubernetes-service-endpoint)
+              command: "apply"
+              useConfigurationFile: true
+              configuration: "$(Build.SourcesDirectory)/deploy/deploy-scripts/analytics-prod.yml"
+              secretType: "dockerRegistry"
+              containerRegistryType: "Azure Container Registry"
+              checkLatest: true
