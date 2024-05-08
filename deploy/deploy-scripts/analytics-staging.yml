@@ -19,6 +19,9 @@ spec:
           image: crtrafficplatformbbyprod.azurecr.io/bbys-analytics-staging-service_nodejs:__TAGNR__
           ports:
             - containerPort: 80
+          resources:
+            limits:
+              memory: ".5Gi"
           env:
               - name: NPM_TOKEN
                 valueFrom:
