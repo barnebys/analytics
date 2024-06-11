@@ -4,11 +4,11 @@ pr: none
 
 variables:
   - name: azure-subscription
-    value: 'Microsoft Azure Sponsorship -- traffic(a096cb2c-44a3-4f14-893b-893da3a2be21)'
+    value: "tech-traffic platform-prod(086198db-aa94-4b90-9bf8-aaf3287e9ef6)"
   - name: container-registry
-    value: '{"loginServer":"crtrafficplatformbbyprod.azurecr.io", "id" : "/subscriptions/a096cb2c-44a3-4f14-893b-893da3a2be21/resourceGroups/rg-traffic-platform-prod/providers/Microsoft.ContainerRegistry/registries/crtrafficplatformbbyprod"}'
+    value: '{"loginServer":"crtrafficplatformbbyprod.azurecr.io", "id" : "/subscriptions/086198db-aa94-4b90-9bf8-aaf3287e9ef6/resourceGroups/rg-traffic-platform-prod/providers/Microsoft.ContainerRegistry/registries/crtrafficplatformbbyprod"}'
   - name: kubernetes-service-endpoint
-    value: 'aks-traffic-backend-prod-v1.27'
+    value: "aks-traffic-prod-v1.29"
 
 pool:
   vmImage: ubuntu-latest
