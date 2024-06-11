@@ -23,66 +23,66 @@ spec:
             limits:
               memory: ".5Gi"
           env:
-              - name: NPM_TOKEN
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: npm-token
-              - name: SECRET
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: secret
-              - name: FAUNADB_SECRET
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: faunadb-secret
-              - name: BIGQUERY_DATASET_ID
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: bq-dataset-id
-              - name: GCP_PROJECT_ID
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: gcp-project-id
-              - name: GCP_CLIENT_EMAIL
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: gcp-client-email
-              - name: GCP_CLIENT_PRIVATE_KEY
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: gcp-client-private-key
-              - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: ai-connection-string
-              - name: EVENTHUB_CONNECTION_STRING
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: eventhub-connection-string
-              - name: EVENTHUB_NAME
-                valueFrom:
-                    secretKeyRef:
-                        name: analytics-service-secrets
-                        key: eventhub-name
-              - name: SESSION_NAME
-                value: _ba
-              - name: SESSION_MAX_AGE
-                value: "60"
-              - name: SITE_URL
-                value: https://www.barnebys.com
-              - name: APP_ENV
-                value: prod
-              - name: BA_HOST
-                value: https://analytics.barnebys.net
+            - name: NPM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: npm-token
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: secret
+            - name: FAUNADB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: faunadb-secret
+            - name: BIGQUERY_DATASET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: bq-dataset-id
+            - name: GCP_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: gcp-project-id
+            - name: GCP_CLIENT_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: gcp-client-email
+            - name: GCP_CLIENT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: gcp-client-private-key
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: ai-connection-string
+            - name: EVENTHUB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: eventhub-connection-string
+            - name: EVENTHUB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: eventhub-name
+            - name: SESSION_NAME
+              value: _ba
+            - name: SESSION_MAX_AGE
+              value: "60"
+            - name: SITE_URL
+              value: https://www.barnebys.com
+            - name: APP_ENV
+              value: prod
+            - name: BA_HOST
+              value: https://analytics.barnebys.net
 ---
 apiVersion: v1
 kind: Service
@@ -104,7 +104,7 @@ metadata:
     # use the shared ingress-nginx
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: bbys-platform-backend-letsencrypt-prod
+    cert-manager.io/cluster-issuer: bbys-platform-letsencrypt-prod
 spec:
   tls:
     - hosts:
@@ -113,25 +113,25 @@ spec:
     - hosts:
         - analytics.barnebys.com
       secretName: tls-secret-bbys-analytics-com-service
-    
+
   rules:
-  - host: analytics.barnebys.net
-    http:
-     paths:
-     - path: /
-       pathType: Prefix
-       backend:
-         service:
-           name: bbys-analytics-service-svc
-           port:
-             number: 80
-  - host: analytics.barnebys.com
-    http:
-     paths:
-     - path: /
-       pathType: Prefix
-       backend:
-         service:
-           name: bbys-analytics-service-svc
-           port:
-             number: 80
+    - host: analytics.barnebys.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bbys-analytics-service-svc
+                port:
+                  number: 80
+    - host: analytics.barnebys.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bbys-analytics-service-svc
+                port:
+                  number: 80
