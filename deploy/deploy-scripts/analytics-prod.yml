@@ -113,33 +113,13 @@ metadata:
     
     # Block common bot user agents
     nginx.ingress.kubernetes.io/server-snippet: |
-      # Block common bots and scrapers
-      if ($http_user_agent ~* (bot|crawler|spider|scraper|curl|wget|python|java|go-http|axios|postman|insomnia|httpie)) {
-        return 403;
-      }
-      
-      # Block requests without user agent
-      if ($http_user_agent = "") {
-        return 403;
-      }
-      
-      # Block suspicious user agents
-      if ($http_user_agent ~* (scan|hack|exploit|inject|attack|test)) {
+      # Consolidated user agent checks
+      if ($http_user_agent ~* (bot|crawler|spider|scraper|curl|wget|python|java|go-http|axios|postman|insomnia|httpie|scan|hack|exploit|inject|attack|test|nikto|nmap|masscan|zap|burp|sqlmap|dirb|gobuster|ffuf|headless|phantom|selenium|puppeteer) OR $http_user_agent = "") {
         return 403;
       }
       
       # Block requests with suspicious headers
       if ($http_x_forwarded_for ~* (tor-exit|proxy|vpn)) {
-        return 403;
-      }
-      
-      # Block common automated tools
-      if ($http_user_agent ~* (nikto|nmap|masscan|zap|burp|sqlmap|dirb|gobuster|ffuf)) {
-        return 403;
-      }
-      
-      # Block headless browsers commonly used for scraping
-      if ($http_user_agent ~* (headless|phantom|selenium|puppeteer)) {
         return 403;
       }
       
