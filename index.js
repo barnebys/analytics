@@ -7,9 +7,11 @@ import webhookHandler from './api/webhook';
 import trackHandler from './api/track';
 import { biteJS, robots, favicon } from './api/static'
 import healthHandler from './api/test/healthCheck'
+import recaptchaTestHandler from './api/test/recaptcha'
 
 export default router(
   get('/health-check', healthHandler),
+  get('/test/recaptcha', recaptchaTestHandler),
   get('/favicon.ico', favicon),
   get('/robots.txt', robots),
   // probably serve static files in another way later
@@ -21,5 +23,3 @@ export default router(
   post('/w/collect', webhookHandler),
   get('/*', trackHandler)
 );
-
-

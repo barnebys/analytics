@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics with reCAPTCHA v3 Integration Example</title>
+    <script src="https://www.google.com/recaptcha/api.js?render=YOUR_SITE_KEY"></script>
+</head>
+<body>
+    <h1>Analytics with reCAPTCHA v3 Integration</h1>
+    <p>This example shows how to integrate Google reCAPTCHA v3 with the analytics tracking system.</p>
+    
+    <button id="trackClick">Track Click Event</button>
+    <button id="trackImpression">Track Impression Event</button>
+
+    <div id="status"></div>
+
+    <script>
+        // Replace with your actual reCAPTCHA site key
+        const RECAPTCHA_SITE_KEY = 'YOUR_SITE_KEY';
+        
+        // Replace with your analytics endpoint
+        const ANALYTICS_ENDPOINT = 'https://analytics-staging.barnebys.net';
+
+        /**
+         * Execute reCAPTCHA and get token
+         */
+        async function getRecaptchaToken(action = 'analytics') {
+            try {
+                const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
+                return token;
+            } catch (error) {
+                console.error('reCAPTCHA error:', error);
+                return null;
+            }
+        }
+
+        /**
+         * Track analytics event with reCAPTCHA
+         */
+        async function trackEvent(eventType, additionalParams = {}) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = 'Getting reCAPTCHA token...';
+
+            // Get reCAPTCHA token
+            const recaptchaToken = await getRecaptchaToken(eventType);
+            
+            if (!recaptchaToken) {
+                statusDiv.innerHTML = 'Failed to get reCAPTCHA token';
+                return;
+            }
+
+            // Build tracking URL with reCAPTCHA token
+            const params = new URLSearchParams({
+                k: eventType, // kind (click, impression, etc.)
+                p: '29', // programId
+                d1: 'sv_SE', // dimension1
+                d2: '1', // dimension2
+                d3: 'axel-petersson-doderhultarn-the-wedding-5-7tGe4YZ-618466753', // dimension3
+                d4: 'auction', // dimension4
+                d5: '319382', // dimension5
+                dt: 'cpc', // dealType
+                sp: '0', // isSponsored
+                source: 'example', // source
+                url: 'https://www.bukowskis.com/en/auctions/665/636-axel-petersson-doderhultarn-the-wedding-5',
+                recaptcha_token: recaptchaToken, // reCAPTCHA token
+                ...additionalParams
+            });
+
+            // Add signature (you'll need to implement this based on your secret)
+            // For this example, we'll skip the signature
+            // params.set('s', generateSignature(params.toString()));
+
+            const trackingUrl = `${ANALYTICS_ENDPOINT}/?${params.toString()}`;
+            
+            statusDiv.innerHTML = 'Sending tracking request...';
+
+            try {
+                // Send tracking request
+                const response = await fetch(trackingUrl, {
+                    method: 'GET',
+                    mode: 'no-cors' // Since this is a tracking pixel
+                });
+                
+                statusDiv.innerHTML = `✅ ${eventType} event tracked successfully with reCAPTCHA!`;
+                console.log('Tracking URL:', trackingUrl);
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Error tracking ${eventType} event: ${error.message}`;
+                console.error('Tracking error:', error);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('trackClick').addEventListener('click', () => {
+            trackEvent('click');
+        });
+
+        document.getElementById('trackImpression').addEventListener('click', () => {
+            trackEvent('impression');
+        });
+
+        // Auto-track page impression on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                trackEvent('impression');
+            }, 1000);
+        });
+    </script>
+
+    <h2>Implementation Notes</h2>
+    <ul>
+        <li><strong>Replace YOUR_SITE_KEY:</strong> Get your reCAPTCHA v3 site key from Google reCAPTCHA console</li>
+        <li><strong>Server Configuration:</strong> Set RECAPTCHA_SECRET_KEY environment variable on your server</li>
+        <li><strong>URL Signing:</strong> Implement proper URL signing for production use</li>
+        <li><strong>Error Handling:</strong> The system gracefully handles missing reCAPTCHA tokens</li>
+        <li><strong>BigQuery Storage:</strong> reCAPTCHA scores and success status are now stored in BigQuery</li>
+    </ul>
+
+    <h2>URL Parameters</h2>
+    <ul>
+        <li><code>recaptcha_token</code> or <code>g_recaptcha_response</code> - The reCAPTCHA v3 token</li>
+        <li>All existing parameters (k, p, d1-d5, etc.) work as before</li>
+    </ul>
+
+    <h2>BigQuery Schema Updates</h2>
+    <p>The following fields have been added to the BigQuery tables:</p>
+    <ul>
+        <li><code>recaptchaScore</code> (FLOAT) - The reCAPTCHA score (0.0 to 1.0)</li>
+        <li><code>recaptchaSuccess</code> (BOOLEAN) - Whether reCAPTCHA verification succeeded</li>
+    </ul>
+</body>
+</html>
