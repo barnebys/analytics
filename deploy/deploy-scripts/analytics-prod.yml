@@ -78,7 +78,7 @@ spec:
                 secretKeyRef:
                   name: analytics-service-secrets
                   key: mongodb-uri
-            - name: MONGODB_DB_NAME
+            - name: MONGODB_DB
               valueFrom:
                 secretKeyRef:
                   name: analytics-service-secrets
