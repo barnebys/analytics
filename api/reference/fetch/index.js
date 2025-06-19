@@ -1,44 +1,49 @@
-import faunadb, { query as q } from 'faunadb';
+import { connectToDatabase } from '../../../lib/mongodb';
 import { send } from '../../../lib/responseHandler';
 
-const { FAUNADB_SECRET: secret } = process.env;
-
-if (!secret) {
-  console.error('%c FaunaDB Error: Missing Secret.', "color:red");
-}
-
-const client = new faunadb.Client({ secret });
-
 export async function queryByFingerprintAndRef(programId, fingerprint, ref) {
-  let result = null;
+  try {
+    const { db } = await connectToDatabase();
+    const references = db.collection('references');
     
-    result = await client.query(
-      q.Get(
-        q.Intersection(
-          q.Intersection(
-            ...getIntersectionRef(ref),
-            q.Match(q.Index('programId'), programId),
-            q.Match(q.Index('fingerprint'), fingerprint)
-          )
-        )
-      )
-    );
-    delete result.ref;
-
-  return result;
+    const refArray = ref.split(',');
+    
+    const result = await references.findOne({
+      programId,
+      fingerprint,
+      refs: { $in: refArray }
+    });
+    
+    if (!result) {
+      throw new Error('Not found');
+    }
+    
+    return result;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function queryByRef(programId, ref) {
-  const ret = await client.query(
-    q.Get(
-      q.Intersection(
-        ...getIntersectionRef(ref),
-        q.Match(q.Index('programId'), programId)
-      )
-    )
-  );
-  delete ret.ref;
-  return ret;
+  try {
+    const { db } = await connectToDatabase();
+    const references = db.collection('references');
+    
+    const refArray = ref.split(',');
+    
+    const result = await references.findOne({
+      programId,
+      refs: { $in: refArray }
+    });
+    
+    if (!result) {
+      throw new Error('Not found');
+    }
+    
+    return result;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function queryByRefAndTraffic(programId, ref) {
@@ -46,51 +51,47 @@ export async function queryByRefAndTraffic(programId, ref) {
 }
 
 export async function queryByFingerprint(programId, fingerprint) {
-  
-  let ret = null;
   try {
-    ret = await client.query(
-      q.Get(
-        q.Intersection(
-          q.Match(q.Index('fingerprint'), fingerprint),
-          q.Match(q.Index('programId'), programId)
-        )
-      )
-    );
-    delete ret.ref;
-  } catch (error) {}
-  
-  return ret;
+    const { db } = await connectToDatabase();
+    const references = db.collection('references');
+    
+    const result = await references.findOne({
+      programId,
+      fingerprint
+    });
+    
+    if (!result) {
+      throw new Error('Not found');
+    }
+    
+    return result;
+  } catch (error) {
+    return null;
+  }
 }
 
 const setTrafficSource = async (reference) => {
-  const {
-    data: { fingerprint, programId },
-  } = reference;
-
+  if (!reference) return reference;
+  
+  const { fingerprint, programId } = reference;
+  
   try {
-    // try fetch session in order to see if the request came from a barnebys click
-    await client.query(
-      q.Get(
-        q.Intersection(
-          q.Match(q.Index('fingerprint'), fingerprint),
-          q.Match(q.Index('programId'), programId),
-          q.Match(q.Index('type'), 'barnebys')
-        )
-      )
-    );
-    reference.data['source'] = 'barnebys';
+    const { db } = await connectToDatabase();
+    const references = db.collection('references');
+    
+    const barnebysSource = await references.findOne({
+      fingerprint,
+      programId,
+      type: 'barnebys'
+    });
+    
+    reference.source = barnebysSource ? 'barnebys' : 'other';
   } catch (err) {
-    reference.data['source'] = 'other';
+    reference.source = 'other';
   }
-
+  
   return reference;
 };
-
-const getIntersectionRef = (ref) =>
-  ref
-    .split(',')
-    .reduce((acc, cur) => acc.concat(q.Match(q.Index('refs'), cur)), []);
 
 export default async function fetchHandler(req, res) {
   const { ref, fingerprint, programId } = req.query;

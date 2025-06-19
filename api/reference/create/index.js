@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { getClientIp } from 'request-ip';
 import anonymize from 'ip-anonymize';
-import faunadb, { query as q } from 'faunadb';
+import { connectToDatabase } from '../../../lib/mongodb';
 import { send } from '../../../lib/responseHandler';
 
 import {
@@ -9,14 +9,6 @@ import {
   queryByFingerprint,
   queryByRef,
 } from '../fetch';
-
-const { FAUNADB_SECRET: secret } = process.env;
-
-let client;
-
-if (secret) {
-  client = new faunadb.Client({ secret });
-}
 
 export default async function createHandler(req, res) {
   const { fingerprint, refs, programId } = req.query;
@@ -34,21 +26,22 @@ export default async function createHandler(req, res) {
 
     const clientIP = getAnonomizedIp(req);
 
-    await client.query(
-      q.Create(q.Collection('references'), {
-        data: {
-          fingerprint,
-          refs: refs.split(','),
-          type: _.get(req.query, 'type', 'other'),
-          programId,
-          clientIP,
-          userAgent: req.headers && req.headers['user-agent'],
-        },
-      })
-    );
+    const { db } = await connectToDatabase();
+    const references = db.collection('references');
+    
+    await references.insertOne({
+      fingerprint,
+      refs: refs.split(','),
+      type: _.get(req.query, 'type', 'other'),
+      programId,
+      clientIP,
+      userAgent: req.headers && req.headers['user-agent'],
+      createdAt: new Date()
+    });
 
     return send(req, res, 200, 'done');
   } catch (err) {
+    console.error('Create reference error:', err);
     return send(req, res, 500, 'something went wrong');
   }
 }

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { queryByFingerprintAndRef } from '../reference/fetch';
+import { connectToDatabase } from '../../lib/mongodb';
 import { send } from '../../lib/responseHandler';
 import { json } from 'micro';
 
@@ -9,29 +9,48 @@ const getEvents = async (req) => {
   const events = await json(req);
   return await Promise.all(
     events.map(async (event) => {
-      return queryByFingerprintAndRef(event.ref, event.programId).then(
-        async (res) => {
-          const { data, error } = await res.json();
+      try {
+        const { db } = await connectToDatabase();
+        const references = db.collection('references');
+        
+        const result = await references.findOne({
+          programId: event.programId,
+          refs: { $in: [event.ref] }
+        });
+        
+        if (!result) {
           return {
-            data: {
-              programId: event.programId,
-              url: '',
-              clientIP: _.get(data, 'clientIP', ''),
-              userAgent: _.get(data, 'userAgent', ''),
-              sessionId: _.get(data, 'fingerprint', ''),
-              action: event.eventAction,
-              category: event.eventCategory,
-              source: _.get(data, 'source', 'unkown'),
-              label: event.eventLabel || '',
-              value: event.eventValue || '',
-              currency: event.eventCurrency || '',
-            },
             ref: event.ref,
-            status: res.status,
-            error: error || '',
+            status: 404,
+            error: 'Reference not found'
           };
         }
-      );
+        
+        return {
+          data: {
+            programId: event.programId,
+            url: '',
+            clientIP: _.get(result, 'clientIP', ''),
+            userAgent: _.get(result, 'userAgent', ''),
+            sessionId: _.get(result, 'fingerprint', ''),
+            action: event.eventAction,
+            category: event.eventCategory,
+            source: _.get(result, 'type', 'unknown') === 'barnebys' ? 'barnebys' : 'other',
+            label: event.eventLabel || '',
+            value: event.eventValue || '',
+            currency: event.eventCurrency || '',
+          },
+          ref: event.ref,
+          status: 200,
+          error: '',
+        };
+      } catch (error) {
+        return {
+          ref: event.ref,
+          status: 500,
+          error: error.message
+        };
+      }
     })
   );
 };
@@ -45,7 +64,7 @@ export default async function collectHandler(req, res) {
   const now = new Date(Date.now()).toISOString();
 
   const events = await getEvents(req);
-  const rows = events.reduce((acc, cur) => acc.concat(cur.data), []);
+  const rows = events.reduce((acc, cur) => acc.concat(cur.data || []), []);
 
   const response = events.reduce(
     (acc, cur) =>

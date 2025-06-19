@@ -1,10 +1,10 @@
 import { BigQuery } from '@google-cloud/bigquery';
-import faunadb, { query as q } from 'faunadb';
+import { connectToDatabase } from '../../lib/mongodb';
 import { send } from '../../lib/responseHandler';
 
 export default async function healthHandler(req, res) {
-  const { FAUNADB_SECRET: secret } = process.env;
   const {
+    MONGODB_URI,
     BIGQUERY_DATASET_ID,
     GCP_CLIENT_EMAIL,
     GCP_CLIENT_PRIVATE_KEY,
@@ -13,14 +13,13 @@ export default async function healthHandler(req, res) {
   const tableName = 'events';
 
   try {
-    await new faunadb.Client({ secret })
-      .query(q.Paginate(q.Collections()))
-      .catch((err) => {
-        throw Error('FaunaDB Error: ' + err.message);
-      });
+    const { client, db } = await connectToDatabase();
+    
+    // Test MongoDB connection by listing collections
+    await db.listCollections().toArray();
   } catch (error) {
-    console.error('FaunaDB connection failed');
-    return send(req, res, 500, { msg: 'FaunaDB Error' });
+    console.error('MongoDB connection failed:', error);
+    return send(req, res, 500, { msg: 'MongoDB Error: Connection failed' });
   }
 
   try {
