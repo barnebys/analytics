@@ -73,6 +73,16 @@ spec:
                 secretKeyRef:
                   name: analytics-service-secrets
                   key: eventhub-name
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: mongodb-uri
+            - name: MONGODB_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: analytics-service-secrets
+                  key: mongodb-db-name
             - name: SESSION_NAME
               value: _ba
             - name: SESSION_MAX_AGE
