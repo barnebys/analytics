@@ -5,7 +5,7 @@ trigger:
 
 variables:
   - name: azure-subscription
-    value: "tech-traffic platform-prod(086198db-aa94-4b90-9bf8-aaf3287e9ef6)"
+    value: "sc-tech-traffic-platform-prod-31-03-2025"
   - name: container-registry
     value: '{"loginServer":"crtrafficplatformbbyprod.azurecr.io", "id" : "/subscriptions/086198db-aa94-4b90-9bf8-aaf3287e9ef6/resourceGroups/rg-traffic-platform-prod/providers/Microsoft.ContainerRegistry/registries/crtrafficplatformbbyprod"}'
   - name: kubernetes-service-endpoint
