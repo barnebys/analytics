@@ -57,6 +57,40 @@ By getting the md5 of `${secret} + ${uri}` and appending that hash to the uri wi
 
 ## Deployment with Now
 
+
+## Deployment to Azure Kubernetes Service (AKS)
+
+You can deploy Barnebys Analytics to Azure Kubernetes Service (AKS) for scalable, managed container orchestration. Below is a high-level guide to get started:
+
+1. **Create an AKS Cluster**
+   - Use the [Azure Portal](https://portal.azure.com/) or Azure CLI:
+     ```sh
+     az aks create --resource-group <ResourceGroup> --name <AKSClusterName> --node-count 2 --enable-addons monitoring --generate-ssh-keys
+     ```
+2. **Build and Push Docker Image**
+   - Build your Docker image and push it to [Azure Container Registry (ACR)](https://azure.microsoft.com/en-us/products/container-registry/) or Docker Hub:
+     ```sh
+     docker build -t <acr-name>.azurecr.io/ba-analytics:latest -f docker/Dockerfile_prod .
+     az acr login --name <acr-name>
+     docker push <acr-name>.azurecr.io/ba-analytics:latest
+     ```
+3. **Configure Kubernetes Manifests**
+   - Deployment manifests are provided in the `deploy` folder (see `deploy/deploy-scripts/` for production and staging examples). Update the image reference in these YAML files to your pushed image as needed.
+4. **Deploy to AKS**
+   - Connect to your AKS cluster and apply the manifests:
+     ```sh
+     az aks get-credentials --resource-group <ResourceGroup> --name <AKSClusterName>
+     kubectl apply -f deploy/deploy-scripts/analytics-prod.yml
+     ```
+5. **Set Environment Variables and Secrets**
+   - Use Kubernetes secrets and config maps for sensitive data (e.g., Google BigQuery credentials, app secrets).
+6. **Monitor and Scale**
+   - Use Azure Monitor and Kubernetes tools to monitor and scale your deployment as needed.
+
+For more details, see the [Azure AKS documentation](https://docs.microsoft.com/en-us/azure/aks/).
+
+## Deployment with Now
+
 You can deploy to any node compatible machine but for ease and scalability we suggest using [Now](https://zeit.co/now).
 
 ```
