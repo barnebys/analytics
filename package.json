@@ -14,7 +14,7 @@
   "dependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.6",
-    "@barnebys/fingerprint": "^1.0.0",
+    "@barnebys/fingerprint": "^2.0.0",
     "@google-cloud/bigquery": "^6.0.0",
     "@vercel/ncc": "^0.34.0",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",

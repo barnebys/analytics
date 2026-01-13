@@ -1393,10 +1393,10 @@
     "@babel/helper-validator-identifier" "^7.22.20"
     to-fast-properties "^2.0.0"
 
-"@barnebys/fingerprint@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/@barnebys/fingerprint/-/fingerprint-1.0.0.tgz#4849f7342e6d971adf3e6aa07c2ae8ddaffe9298"
-  integrity sha512-Rq5uiJ7OowAAoe/mFzRCjycIq4U7PNNnfenObB2MJvX+NIv6DYo85iPYJYRtdf3iQQB4x5BzBfCml0w47E0EnA==
+"@barnebys/fingerprint@^2.0.0":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@barnebys/fingerprint/-/fingerprint-2.0.1.tgz#08072656b87e40d98231da4e4d8269e61f026ae1"
+  integrity sha512-cOsMnjxFTleP30g3jD6gAa+UYY2Gjn+QT3S7oCCSmINfgKYfnb2IEvgHtM0gKEWWTi7CbDjVaWOCRpdxg6JKtA==
 
 "@google-cloud/bigquery@^6.0.0":
   version "6.2.1"
