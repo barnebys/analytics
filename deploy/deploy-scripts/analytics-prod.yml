@@ -115,6 +115,45 @@ metadata:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: bbys-platform-letsencrypt-prod
+    
+    # Rate limiting to prevent aggressive scraping
+    nginx.ingress.kubernetes.io/rate-limit: "10"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/rate-limit-connections: "5"
+    
+    # Block common bot user agents
+    nginx.ingress.kubernetes.io/server-snippet: |
+      # Consolidated user agent checks
+      if ($http_user_agent ~* (bot|crawler|spider|scraper|curl|wget|python|java|go-http|axios|postman|insomnia|httpie|scan|hack|exploit|inject|attack|test|nikto|nmap|masscan|zap|burp|sqlmap|dirb|gobuster|ffuf|headless|phantom|selenium|puppeteer)) {
+        return 403;
+      }
+      if ($http_user_agent = "") {
+        return 403;
+      }
+      # Block requests with suspicious headers
+      if ($http_x_forwarded_for ~* (tor-exit|proxy|vpn)) {
+        return 403;
+      }
+      
+      # Block requests with no referrer and suspicious patterns
+      if ($http_referer = "" AND $request_method = "GET" AND $args ~ "(select|union|insert|delete|update|drop|create|alter)") {
+        return 403;
+      }
+    
+    # Additional security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+      more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
+      
+      # Log blocked requests for monitoring
+      access_log /var/log/nginx/analytics-blocked.log combined if=$blocked_ua;
+      
+    # Whitelist legitimate monitoring services (optional)
+    nginx.ingress.kubernetes.io/whitelist-source-range: |
+      # Add your monitoring service IPs here if needed
+      # 1.2.3.4/32,5.6.7.8/32
 spec:
   tls:
     - hosts:
@@ -123,7 +162,6 @@ spec:
     - hosts:
         - analytics.barnebys.com
       secretName: tls-secret-bbys-analytics-com-service
-
   rules:
     - host: analytics.barnebys.net
       http:
